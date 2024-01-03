@@ -5,7 +5,7 @@
 
 extern "C" {
 #include "./SDL2-2.0.10/include/SDL.h"
-#include "./SDL2-2.0.10/include/SDL_main.h"
+/* #include "./SDL2-2.0.10/include/SDL_main.h" */
 }
 
 #define SCREEN_WIDTH 640
@@ -124,7 +124,7 @@ extern "C"
   SDL_ShowCursor(SDL_DISABLE);
 
   // wczytanie obrazka cs8x8.bmp
-  charset = SDL_LoadBMP("./cs8x8.bmp");
+  charset = SDL_LoadBMP("resources/cs8x8.bmp");
   if (charset == NULL) {
     printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
     SDL_FreeSurface(screen);
@@ -136,7 +136,7 @@ extern "C"
   };
   SDL_SetColorKey(charset, true, 0x000000);
 
-  eti = SDL_LoadBMP("./eti.bmp");
+  eti = SDL_LoadBMP("resources/eti.bmp");
   if (eti == NULL) {
     printf("SDL_LoadBMP(eti.bmp) error: %s\n", SDL_GetError());
     SDL_FreeSurface(charset);
