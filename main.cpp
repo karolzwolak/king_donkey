@@ -1,4 +1,5 @@
 #define _USE_MATH_DEFINES
+#include "objects.cpp"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
