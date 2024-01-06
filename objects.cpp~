@@ -37,37 +37,32 @@ void Dynamic::set_velocity(Vector2 v) { velocity = v; }
 void Dynamic::set_acceleration_x(float x) { acceleration.x = x; }
 
 // TODO: add collisions
-void Dynamic::update(Vector2 *pos, bool on_ground, MoveDirection move_direction , float dt) {
-  /* acceleration.x -= velocity.x * FRICTION * dt; */
-  velocity.x = 0;
-
-  if (move_direction == LEFT) {
-    velocity.x = -MOVE_VELOCITY;
-  } else if (move_direction == RIGHT) {
-    velocity.x = MOVE_VELOCITY;
-  }
-
-  velocity = velocity.add(acceleration.mul(dt));
-  limit_velocity();
-
-  float old_pos_y = pos->y;
+void Dynamic::update(Vector2 *pos, bool on_ground, float dt) {
+  /* acceleration.x -= velocity.x * FRICTION; */
+  /**/
+  /* velocity = velocity.add(acceleration.mul(dt)); */
+  /* limit_velocity(); */
+  /**/
+  /* float old_pos_y = pos->y; */
   *pos = pos->add(velocity.mul(dt));
-  *pos = pos->add(acceleration.mul(0.5 * dt * dt));
+  /* *pos = pos->add(acceleration.mul(0.5 * dt * dt)); */
 
-  /* if (on_ground && pos->y > old_pos_y) { */
-  /*   pos->y = old_pos_y; */
-  /* } */
+  if (on_ground && pos->y > old_pos_y) {
+    pos->y = old_pos_y;
+  }
 }
+
+/* Player::Player() : Player(Vector2(0, 0), 0, 0){}; */
 
 Player::Player(Vector2 pos, int w, int h)
     : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), curr_ladder(NULL),
-      on_ladder(false), move_direction(NONE) {}
+      on_ladder(false) {}
 
 Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT){};
 
 void Player::update(double dt) {
   bool on_ground = obj.position.y == 0;
-  dynamic.update(&obj.position, on_ground,move_direction, dt);
+  dynamic.update(&obj.position, on_ground, dt);
 }
 
 void Player::draw(Screen &screen) { obj.draw(&screen); }
@@ -76,25 +71,17 @@ void Player::move(MoveDirection dir) {
   printf("velocity: x: %f; y %f\n", dynamic.velocity.x, dynamic.velocity.y);
   printf("acceleration: x: %f; y %f\n", dynamic.acceleration.x,
          dynamic.acceleration.y);
-
-  move_direction = dir;
-
-  /* dynamic.set_acceleration_x(0); */
-  /* dynamic.velocity.x = 0; */
-  /* switch (dir) { */
-  /* case LEFT: */
-  /*     dynamic.velocity.x = -MOVE */
-  /*   break; */
-  /* case RIGHT: */
-  /*     dynamic.velocity.x = 100; */
-  /*   break; */
-  /*     case NONE: */
-  /*     dynamic.set_acceleration_x(0); */
-  /*     dynamic.velocity.x = 0; */
-  /*   break; */
+  dynamic.set_acceleration_x(0);
+  switch (dir) {
+  case LEFT:
+    dynamic.set_acceleration_x(-500);
+    break;
+  case RIGHT:
+    dynamic.set_acceleration_x(500);
+    break;
     /* case UP: */
     /*   break; */
     /* case DOWN: */
     /*   break; */
-  /* }; */
+  };
 }
