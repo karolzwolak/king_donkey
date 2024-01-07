@@ -27,19 +27,40 @@ public:
     case SDLK_ESCAPE:
       return true;
     case SDLK_LEFT:
-      world.player.move(LEFT);
+      world.player.move(LEFT, true);
       break;
     case SDLK_RIGHT:
-      world.player.move(RIGHT);
+      world.player.move(RIGHT, true);
       break;
     case SDLK_UP:
-      world.player.move(UP);
+      world.player.move(UP, true);
       break;
     case SDLK_DOWN:
-      world.player.move(DOWN);
+      world.player.move(DOWN, true);
       break;
-      /* case SDLK_SPACE: */
-      /*   world.player.jump(); */
+    case SDLK_SPACE:
+      world.player.jump();
+      break;
+    };
+    return false;
+  }
+
+  bool process_keyup(SDL_Keycode key) {
+    switch (key) {
+    case SDLK_ESCAPE:
+      return true;
+    case SDLK_LEFT:
+      world.player.move(LEFT, false);
+      break;
+    case SDLK_RIGHT:
+      world.player.move(RIGHT, false);
+      break;
+    case SDLK_UP:
+      world.player.move(UP, false);
+      break;
+    case SDLK_DOWN:
+      world.player.move(DOWN, false);
+      break;
     };
     return false;
   }
@@ -48,8 +69,7 @@ public:
     while (SDL_PollEvent(&screen.event)) {
       switch (screen.event.type) {
       case SDL_KEYUP:
-        world.player.move(NONE);
-        break;
+        return process_keyup(screen.event.key.keysym.sym);
       case SDL_KEYDOWN:
         return process_keydown(screen.event.key.keysym.sym);
       case SDL_QUIT:

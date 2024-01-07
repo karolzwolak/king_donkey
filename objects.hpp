@@ -4,11 +4,12 @@
 #include "primitives.hpp"
 #include "screen.hpp"
 
-/* const float GRAVITY = 0; */
-const float GRAVITY = 200;
+class World;
+
+const float GRAVITY = 500;
 const float MAX_VELOCITY = 5000;
-/* const float FRICTION = 0.1; */
 const float MOVE_VELOCITY = 150;
+const float JUMP_VELOCITY = 300;
 
 const int TILE_WIDTH = 16;
 const int TILE_HEIGHT = 16;
@@ -38,11 +39,13 @@ public:
 
   Object(Vector2 pos, int w, int h, SDL_Surface *s);
   void draw(Screen *screen);
+  bool collides_with(Object *obj);
 };
 
 class Dynamic {
 public:
   Vector2 velocity, acceleration;
+  bool on_ground;
 
   void limit_velocity();
 
@@ -52,8 +55,13 @@ public:
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
 
-  void update(Vector2 *pos, bool on_ground, MoveDirection move_direction,
-              float dt);
+  bool check_tile_collisions_x(Object *obj, World *world);
+  bool check_tile_collisions_y(Object *obj, World *world);
+
+  void horizontal_movement(Vector2 &pos, MoveDirection dir, double dt);
+  void vertical_movement(Vector2 &pos, MoveDirection dir, double dt);
+
+  void update(Object &obj, MoveDirection dir, World *world, double dt);
 };
 
 class Ladder {
@@ -62,9 +70,10 @@ class Ladder {
 };
 
 class Tile {
-  Object obj;
 
 public:
+  Object obj;
+
   Tile();
   Tile(Vector2 pos);
   void draw(Screen &screen);
@@ -90,8 +99,9 @@ public:
 
   Player(Vector2 pos);
 
-  void update(double dt);
+  void update(World *world, double dt);
   void draw(Screen &screen);
 
-  void move(MoveDirection dir);
+  void move(MoveDirection dir, bool key_down);
+  void jump();
 };

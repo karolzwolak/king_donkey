@@ -14,7 +14,7 @@ World::World(int w, int h)
   }
 }
 
-void World::update(double dt) { player.update(dt); }
+void World::update(double dt) { player.update(this, dt); }
 void World::draw(Screen &screen) {
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);

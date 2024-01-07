@@ -1,14 +1,15 @@
 #pragma once
 
 #include "objects.hpp"
+#include "screen.hpp"
 
 class World {
   int width, height;
-  Tile *tiles;
-  int tile_count;
 
 public:
   Player player;
+  Tile *tiles;
+  int tile_count;
 
   World(int w, int h);
 
