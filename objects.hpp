@@ -10,6 +10,9 @@ const float MAX_VELOCITY = 5000;
 /* const float FRICTION = 0.1; */
 const float MOVE_VELOCITY = 150;
 
+const int TILE_WIDTH = 16;
+const int TILE_HEIGHT = 16;
+
 enum PlayerState {
   IDLE,
   WALKING,
@@ -60,6 +63,11 @@ class Ladder {
 
 class Tile {
   Object obj;
+
+public:
+  Tile();
+  Tile(Vector2 pos);
+  void draw(Screen &screen);
 };
 
 class Barell {

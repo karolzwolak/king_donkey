@@ -20,6 +20,11 @@ void Object::draw(Screen *screen) {
   screen->draw_rect(position.x, position.y, width, height, 0x000000, 0x00ff00);
 }
 
+Tile::Tile() : obj(Object(Vector2(0, 0), 0, 0, NULL)) {}
+Tile::Tile(Vector2 pos) : obj(Object(pos, TILE_WIDTH, TILE_HEIGHT, NULL)) {}
+
+void Tile::draw(Screen &screen) { obj.draw(&screen); }
+
 Dynamic::Dynamic() {
   velocity = Vector2(0, 0);
   acceleration = Vector2(0, GRAVITY);
@@ -37,7 +42,8 @@ void Dynamic::set_velocity(Vector2 v) { velocity = v; }
 void Dynamic::set_acceleration_x(float x) { acceleration.x = x; }
 
 // TODO: add collisions
-void Dynamic::update(Vector2 *pos, bool on_ground, MoveDirection move_direction , float dt) {
+void Dynamic::update(Vector2 *pos, bool on_ground, MoveDirection move_direction,
+                     float dt) {
   /* acceleration.x -= velocity.x * FRICTION * dt; */
   velocity.x = 0;
 
@@ -67,7 +73,7 @@ Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT){};
 
 void Player::update(double dt) {
   bool on_ground = obj.position.y == 0;
-  dynamic.update(&obj.position, on_ground,move_direction, dt);
+  dynamic.update(&obj.position, on_ground, move_direction, dt);
 }
 
 void Player::draw(Screen &screen) { obj.draw(&screen); }
@@ -92,9 +98,9 @@ void Player::move(MoveDirection dir) {
   /*     dynamic.set_acceleration_x(0); */
   /*     dynamic.velocity.x = 0; */
   /*   break; */
-    /* case UP: */
-    /*   break; */
-    /* case DOWN: */
-    /*   break; */
+  /* case UP: */
+  /*   break; */
+  /* case DOWN: */
+  /*   break; */
   /* }; */
 }

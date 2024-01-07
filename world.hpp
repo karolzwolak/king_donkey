@@ -4,6 +4,8 @@
 
 class World {
   int width, height;
+  Tile *tiles;
+  int tile_count;
 
 public:
   Player player;
