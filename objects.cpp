@@ -28,6 +28,11 @@ bool Object::collides_with(Object *obj) {
          position.y + height > obj->position.y;
 }
 
+Ladder::Ladder(Vector2 pos, int w, int h) : obj(Object(pos, w, h, NULL)) {}
+Ladder::Ladder() : obj(Object(Vector2(0, 0), 0, 0, NULL)) {}
+
+void Ladder::draw(Screen &screen) { obj.draw(&screen); }
+
 Tile::Tile() : obj(Object(Vector2(0, 0), 0, 0, NULL)) {}
 Tile::Tile(Vector2 pos) : obj(Object(pos, TILE_WIDTH, TILE_HEIGHT, NULL)) {}
 
@@ -110,6 +115,7 @@ void Dynamic::horizontal_movement(Vector2 &pos, MoveDirection dir, double dt) {
 
 void Dynamic::vertical_movement(Vector2 &pos, MoveDirection dir, double dt) {
   velocity.y += acceleration.y * dt;
+
   limit_velocity();
 
   pos.y += velocity.y * dt + acceleration.y * 0.5 * dt * dt;
@@ -124,13 +130,71 @@ void Dynamic::update(Object &obj, MoveDirection dir, World *world, double dt) {
 }
 
 Player::Player(Vector2 pos, int w, int h)
-    : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), curr_ladder(NULL),
-      on_ladder(false), move_direction(NONE) {}
+    : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), on_ladder(false),
+      move_direction(NONE) {}
+
+void Player::player_vertical_movement(double dt) {
+  if (on_ladder) {
+    switch (move_direction) {
+    case UP:
+      dynamic.velocity.y = -CLIMB_VELOCITY;
+      break;
+    case DOWN:
+      dynamic.velocity.y = CLIMB_VELOCITY;
+      break;
+    default:
+      dynamic.velocity.y = 0;
+      break;
+    }
+  }
+
+  dynamic.vertical_movement(obj.position, move_direction, dt);
+}
 
 Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT){};
 
 void Player::update(World *world, double dt) {
-  dynamic.update(obj, move_direction, world, dt);
+  dynamic.horizontal_movement(obj.position, move_direction, dt);
+  if (!on_ladder)
+    dynamic.check_tile_collisions_x(&obj, world);
+
+  if (move_direction == UP && !on_ladder) {
+    Ladder *ladder = world->intersecting_ladder(&obj);
+    if (ladder != NULL) {
+      get_on_ladder(ladder);
+    }
+  }
+
+  player_vertical_movement(dt);
+
+  if (on_ladder && world->intersecting_ladder(&obj) == NULL) {
+    get_off_ladder();
+  }
+
+  if (!on_ladder || move_direction == DOWN) {
+    dynamic.check_tile_collisions_y(&obj, world);
+    // get off ladder early if there is ground above it
+    if (on_ladder && dynamic.on_ground)
+      get_off_ladder();
+  }
+}
+
+void Player::get_on_ladder(Ladder *ladder) {
+  on_ladder = true;
+  obj.position.x = ladder->obj.position.x;
+  dynamic.velocity.y = 0;
+  dynamic.acceleration.y = 0;
+  move_direction = NONE;
+}
+
+void Player::get_off_ladder() {
+  on_ladder = false;
+  dynamic.acceleration.y = GRAVITY;
+  if (move_direction == UP)
+    dynamic.velocity.y = -JUMP_VELOCITY / 4;
+  else
+    dynamic.velocity.y = 0;
+  move_direction = NONE;
 }
 
 void Player::draw(Screen &screen) { obj.draw(&screen); }

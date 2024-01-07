@@ -11,6 +11,8 @@ const float MAX_VELOCITY = 5000;
 const float MOVE_VELOCITY = 150;
 const float JUMP_VELOCITY = 300;
 
+const float CLIMB_VELOCITY = 50;
+
 const int TILE_WIDTH = 16;
 const int TILE_HEIGHT = 16;
 
@@ -65,8 +67,13 @@ public:
 };
 
 class Ladder {
-  int n_segments;
-  Object bottom_piece;
+
+public:
+  Object obj;
+
+  Ladder();
+  Ladder(Vector2 pos, int w, int h);
+  void draw(Screen &screen);
 };
 
 class Tile {
@@ -90,7 +97,6 @@ const int PLAYER_HEIGHT = 32;
 class Player {
   Dynamic dynamic;
   Object obj;
-  Ladder *curr_ladder;
   MoveDirection move_direction;
   bool on_ladder;
   /* PlayerState state; */
@@ -101,6 +107,12 @@ public:
 
   void update(World *world, double dt);
   void draw(Screen &screen);
+
+  bool check_on_ladder(World *world);
+
+  void get_on_ladder(Ladder *ladder);
+  void get_off_ladder();
+  void player_vertical_movement(double dt);
 
   void move(MoveDirection dir, bool key_down);
   void jump();
