@@ -12,6 +12,7 @@ World::World(int w, int h)
     tiles[tile_count++] = Tile(Vector2(x, 200));
     x += TILE_WIDTH;
   }
+  tiles[tile_count++] = Tile(Vector2(x, 200 - 16));
 }
 
 void World::update(double dt) { player.update(this, dt); }

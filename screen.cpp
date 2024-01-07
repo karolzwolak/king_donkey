@@ -89,8 +89,6 @@ double Screen::tick() {
   t1 = t2;
   dt = dt_ms * 0.001;
 
-  /* limit_fps(); */
-
   // count frames per second
   fps_timer += dt;
   if (fps_timer > 0.5) {
@@ -100,6 +98,8 @@ double Screen::tick() {
     printf("fps: %f\n", fps);
   };
   frames++;
+
+  limit_fps();
 
   return dt;
 }

@@ -71,6 +71,8 @@ bool Dynamic::check_tile_collisions_x(Object *obj, World *world) {
 }
 
 bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
+  on_ground = false;
+
   for (int i = 0; i < world->tile_count; i++) {
     if (obj->collides_with(&world->tiles[i].obj)) {
 

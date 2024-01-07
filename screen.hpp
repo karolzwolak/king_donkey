@@ -11,7 +11,7 @@ extern "C" {
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define TARGET_FPS 60
+#define TARGET_FPS 120
 #define WINDOW_TITLE "King Donkey game"
 
 class Screen {
