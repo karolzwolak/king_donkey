@@ -65,6 +65,13 @@ bool Dynamic::check_tile_collisions_x(Object *obj, World *world) {
   for (int i = 0; i < world->tile_count; i++) {
     if (obj->collides_with(&world->tiles[i].obj)) {
 
+      double elevation_dist = obj->bottom() - world->tiles[i].obj.top();
+      if (velocity.y == 0 && elevation_dist > 0 &&
+          elevation_dist <= CLIMB_THRESHOLD) {
+        obj->position.y -= elevation_dist;
+        return true;
+      }
+
       bool collision_from_left = velocity.x > 0;
       if (collision_from_left)
         obj->position.x = world->tiles[i].obj.left() - obj->width;

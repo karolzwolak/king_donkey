@@ -12,11 +12,13 @@ World::World(int w, int h)
   ladder_count = 0;
 
   int x = 0;
-  for (int i = 0; i < 20; i++) {
-    tiles[tile_count++] = Tile(Vector2(x, 200));
+  int y = 200;
+  for (int i = 0; i < 10; i++) {
+    tiles[tile_count++] = Tile(Vector2(x, y));
     x += TILE_WIDTH;
+    y -= CLIMB_THRESHOLD;
   }
-  tiles[tile_count++] = Tile(Vector2(x, 200 - 16));
+  tiles[tile_count++] = Tile(Vector2(x, y - 16));
 
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 16, 32);
   tiles[tile_count++] = Tile(Vector2(100, 100));

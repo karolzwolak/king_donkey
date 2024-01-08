@@ -19,6 +19,8 @@ const int TILE_HEIGHT = 16;
 const int PLAYER_WIDTH = 16;
 const int PLAYER_HEIGHT = 32;
 
+const int CLIMB_THRESHOLD = 0.25 * TILE_HEIGHT;
+
 enum PlayerState {
   IDLE,
   WALKING,
