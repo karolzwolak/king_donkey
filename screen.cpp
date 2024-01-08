@@ -28,11 +28,11 @@ void Screen::draw_string(int x, int y, const char *text, SDL_Surface *charset) {
 };
 
 // draw a surface sprite on a surface screen in point (x, y)
-// (x, y) is the center of sprite on screen
+// (x, y) is the top left corner of sprite on screen
 void Screen::draw_sprite(SDL_Surface *sprite, int x, int y) {
   SDL_Rect dest;
-  dest.x = x - sprite->w / 2;
-  dest.y = y - sprite->h / 2;
+  dest.x = x;
+  dest.y = y;
   dest.w = sprite->w;
   dest.h = sprite->h;
   SDL_BlitSurface(sprite, NULL, screen, &dest);

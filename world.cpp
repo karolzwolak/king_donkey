@@ -1,7 +1,8 @@
 #include "world.hpp"
+#include "objects.hpp"
 
 World::World(int w, int h)
-    : width(w), height(h), player(Player(Vector2(10, 10), 16, 32)), tiles(NULL),
+    : width(w), height(h), player(Player(Vector2(10, 10))), tiles(NULL),
       tile_count(0), ladders(NULL), ladder_count(0) {
 
   tiles = new Tile[100];
@@ -20,6 +21,7 @@ World::World(int w, int h)
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 16, 32);
   tiles[tile_count++] = Tile(Vector2(100, 100));
 }
+
 Ladder *World::intersecting_ladder(Object *obj) {
   for (int i = 0; i < ladder_count; i++) {
     if (obj->collides_with(&ladders[i].obj)) {

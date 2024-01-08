@@ -16,16 +16,22 @@ Object::Object(Vector2 pos, int w, int h, SDL_Surface *s) {
   sprite = s;
 }
 
+double Object::top() { return position.y; }
+double Object::bottom() { return position.y + height; }
+double Object::left() { return position.x; }
+double Object::right() { return position.x + width; }
+
+double Object::center_x() { return position.x + width / 2.; }
+double Object::center_y() { return position.y + height / 2.; }
+
 void Object::draw(Screen *screen) {
   /* screen->draw_sprite(sprite, position.x, position.y); */
   screen->draw_rect(position.x, position.y, width, height, 0x000000, 0x00ff00);
 }
 
 bool Object::collides_with(Object *obj) {
-  return position.x < obj->position.x + obj->width &&
-         position.x + width > obj->position.x &&
-         position.y < obj->position.y + obj->height &&
-         position.y + height > obj->position.y;
+  return left() < obj->right() && right() > obj->left() &&
+         top() < obj->bottom() && bottom() > obj->top();
 }
 
 Ladder::Ladder(Vector2 pos, int w, int h) : obj(Object(pos, w, h, NULL)) {}
@@ -61,9 +67,9 @@ bool Dynamic::check_tile_collisions_x(Object *obj, World *world) {
 
       bool collision_from_left = velocity.x > 0;
       if (collision_from_left)
-        obj->position.x = world->tiles[i].obj.position.x - obj->width;
+        obj->position.x = world->tiles[i].obj.left() - obj->width;
       else {
-        obj->position.x = world->tiles[i].obj.position.x + obj->width;
+        obj->position.x = world->tiles[i].obj.right();
       }
 
       velocity.x = 0;
@@ -83,11 +89,11 @@ bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
 
       bool collision_from_top = velocity.y > 0;
       if (collision_from_top) {
-        obj->position.y = world->tiles[i].obj.position.y - obj->height;
+        obj->position.y = world->tiles[i].obj.top() - obj->height;
         on_ground = true;
 
       } else {
-        obj->position.y = world->tiles[i].obj.position.y + obj->height;
+        obj->position.y = world->tiles[i].obj.bottom();
       }
 
       velocity.y = 0;
@@ -181,7 +187,7 @@ void Player::update(World *world, double dt) {
 
 void Player::get_on_ladder(Ladder *ladder) {
   on_ladder = true;
-  obj.position.x = ladder->obj.position.x;
+  obj.position.x = ladder->obj.center_x() - obj.width / 2.;
   dynamic.velocity.y = 0;
   dynamic.acceleration.y = 0;
   move_direction = NONE;
@@ -207,6 +213,9 @@ void Player::move(MoveDirection dir, bool key_down) {
     }
     return;
   }
+  if (on_ladder && (dir == LEFT || dir == RIGHT))
+    return;
+
   move_direction = dir;
 }
 

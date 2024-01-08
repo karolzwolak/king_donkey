@@ -33,7 +33,7 @@ public:
   void draw_string(int x, int y, const char *text, SDL_Surface *charset);
 
   // draw a surface sprite on a surface screen in point (x, y)
-  // (x, y) is the center of sprite on screen
+  // (x, y) is the left top corner
   void draw_sprite(SDL_Surface *sprite, int x, int y);
 
   // draw a single pixel

@@ -16,6 +16,9 @@ const float CLIMB_VELOCITY = 50;
 const int TILE_WIDTH = 16;
 const int TILE_HEIGHT = 16;
 
+const int PLAYER_WIDTH = 16;
+const int PLAYER_HEIGHT = 32;
+
 enum PlayerState {
   IDLE,
   WALKING,
@@ -36,10 +39,20 @@ class Object {
   SDL_Surface *sprite;
 
 public:
+  /// Position is the left top corner
   Vector2 position;
   int width, height;
 
   Object(Vector2 pos, int w, int h, SDL_Surface *s);
+
+  double top();
+  double bottom();
+  double left();
+  double right();
+
+  double center_x();
+  double center_y();
+
   void draw(Screen *screen);
   bool collides_with(Object *obj);
 };
@@ -90,9 +103,6 @@ class Barell {
   Dynamic dynamic;
   Object obj;
 };
-
-const int PLAYER_WIDTH = 16;
-const int PLAYER_HEIGHT = 32;
 
 class Player {
   Dynamic dynamic;
