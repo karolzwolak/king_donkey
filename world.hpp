@@ -15,6 +15,9 @@ public:
   Tile *tiles;
   int tile_count;
 
+  Barrel *barrels;
+  int barrel_count;
+
   World(int w, int h);
 
   void update(double dt);

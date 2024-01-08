@@ -11,6 +11,9 @@ World::World(int w, int h)
   ladders = new Ladder[100];
   ladder_count = 0;
 
+  barrels = new Barrel[100];
+  barrel_count = 0;
+
   int x = 0;
   int y = 200;
   for (int i = 0; i < 10; i++) {
@@ -22,6 +25,8 @@ World::World(int w, int h)
 
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 16, 32);
   tiles[tile_count++] = Tile(Vector2(100, 100));
+
+  barrels[barrel_count++] = Barrel(Vector2(100, 80), LEFT);
 }
 
 Ladder *World::intersecting_ladder(Object *obj) {
@@ -33,7 +38,13 @@ Ladder *World::intersecting_ladder(Object *obj) {
   return NULL;
 }
 
-void World::update(double dt) { player.update(this, dt); }
+void World::update(double dt) {
+  player.update(this, dt);
+
+  for (int i = 0; i < barrel_count; i++) {
+    barrels[i].update(this, dt);
+  }
+}
 void World::draw(Screen &screen) {
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);
@@ -41,6 +52,10 @@ void World::draw(Screen &screen) {
 
   for (int i = 0; i < ladder_count; i++) {
     ladders[i].draw(screen);
+  }
+
+  for (int i = 0; i < barrel_count; i++) {
+    barrels[i].draw(screen);
   }
   player.draw(screen);
 }

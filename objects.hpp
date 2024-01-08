@@ -13,13 +13,17 @@ const float JUMP_VELOCITY = 300;
 
 const float CLIMB_VELOCITY = 50;
 
-const int TILE_WIDTH = 16;
+const int TILE_WIDTH = 32;
 const int TILE_HEIGHT = 16;
 
 const int PLAYER_WIDTH = 16;
 const int PLAYER_HEIGHT = 32;
 
+const int BARREL_WIDTH = 16;
+const int BARREL_HEIGHT = 16;
+
 const int CLIMB_THRESHOLD = 0.25 * TILE_HEIGHT;
+const int COYOTE_DIST = CLIMB_THRESHOLD + 0.1;
 
 enum PlayerState {
   IDLE,
@@ -36,6 +40,8 @@ enum MoveDirection {
   DOWN,
   NONE,
 };
+
+MoveDirection opposite_direction(MoveDirection dir);
 
 class Object {
   SDL_Surface *sprite;
@@ -62,7 +68,9 @@ public:
 class Dynamic {
 public:
   Vector2 velocity, acceleration;
+  double fall_dist;
   bool on_ground;
+  bool coyote_on_ground;
 
   void limit_velocity();
 
@@ -101,9 +109,19 @@ public:
   void draw(Screen &screen);
 };
 
-class Barell {
+class Barrel {
+
+public:
   Dynamic dynamic;
   Object obj;
+  MoveDirection move_direction;
+
+  Barrel(Vector2 pos, int w, int h, MoveDirection dir);
+  Barrel(Vector2 pos, MoveDirection dir);
+  Barrel();
+
+  void update(World *world, double dt);
+  void draw(Screen &screen);
 };
 
 class Player {

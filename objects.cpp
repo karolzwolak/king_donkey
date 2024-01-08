@@ -9,6 +9,21 @@ int sign(float x) {
   return 0;
 }
 
+MoveDirection opposite_direction(MoveDirection dir) {
+  switch (dir) {
+  case LEFT:
+    return RIGHT;
+  case RIGHT:
+    return LEFT;
+  case UP:
+    return DOWN;
+  case DOWN:
+    return UP;
+  default:
+    return NONE;
+  }
+}
+
 Object::Object(Vector2 pos, int w, int h, SDL_Surface *s) {
   position = pos;
   width = w;
@@ -98,6 +113,7 @@ bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
       if (collision_from_top) {
         obj->position.y = world->tiles[i].obj.top() - obj->height;
         on_ground = true;
+        coyote_on_ground = true;
 
       } else {
         obj->position.y = world->tiles[i].obj.bottom();
@@ -108,6 +124,10 @@ bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
       return true;
     }
   }
+
+  if (coyote_on_ground && fall_dist > COYOTE_DIST)
+    coyote_on_ground = false;
+
   return false;
 }
 
@@ -131,7 +151,13 @@ void Dynamic::vertical_movement(Vector2 &pos, MoveDirection dir, double dt) {
 
   limit_velocity();
 
+  double y = pos.y;
   pos.y += velocity.y * dt + acceleration.y * 0.5 * dt * dt;
+
+  if (!on_ground && velocity.y > 0)
+    fall_dist += pos.y - y;
+  else
+    fall_dist = 0;
 }
 
 void Dynamic::update(Object &obj, MoveDirection dir, World *world, double dt) {
@@ -164,7 +190,28 @@ void Player::player_vertical_movement(double dt) {
   dynamic.vertical_movement(obj.position, move_direction, dt);
 }
 
+Barrel::Barrel(Vector2 pos, int w, int h, MoveDirection dir)
+    : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), move_direction(dir) {}
+
+Barrel::Barrel(Vector2 pos, MoveDirection dir)
+    : Barrel(pos, BARREL_WIDTH, BARREL_HEIGHT, dir){};
+
+Barrel::Barrel() : Barrel(Vector2(0, 0), NONE){};
+
 Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT){};
+
+void Barrel::update(World *world, double dt) {
+  bool was_on_ground = dynamic.on_ground;
+  double fall_dist = dynamic.fall_dist;
+
+  dynamic.update(obj, move_direction, world, dt);
+
+  if (dynamic.on_ground && !was_on_ground && fall_dist > 1 + CLIMB_THRESHOLD) {
+    move_direction = opposite_direction(move_direction);
+  }
+}
+
+void Barrel::draw(Screen &screen) { obj.draw(&screen); }
 
 void Player::update(World *world, double dt) {
   dynamic.horizontal_movement(obj.position, move_direction, dt);
@@ -227,9 +274,10 @@ void Player::move(MoveDirection dir, bool key_down) {
 }
 
 void Player::jump() {
-  if (!dynamic.on_ground)
+  if (!dynamic.coyote_on_ground)
     return;
 
   dynamic.on_ground = false;
+  dynamic.coyote_on_ground = false;
   dynamic.velocity.y = -JUMP_VELOCITY;
 }
