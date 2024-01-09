@@ -3,6 +3,7 @@
 #include "./SDL2-2.0.10/include/SDL.h"
 #include "primitives.hpp"
 #include "screen.hpp"
+#include "texture.hpp"
 
 class World;
 
@@ -44,14 +45,12 @@ enum MoveDirection {
 MoveDirection opposite_direction(MoveDirection dir);
 
 class Object {
-  SDL_Surface *sprite;
-
 public:
   /// Position is the left top corner
   Vector2 position;
   int width, height;
 
-  Object(Vector2 pos, int w, int h, SDL_Surface *s);
+  Object(Vector2 pos, int w, int h);
 
   double top();
   double bottom();
@@ -61,7 +60,8 @@ public:
   double center_x();
   double center_y();
 
-  void draw(Screen *screen);
+  void draw_simple(Screen *screen, SimpleTexture *texture);
+  void draw_animated(Screen *screen, AnimatedTexture *texture);
   bool collides_with(Object *obj);
 };
 
@@ -106,7 +106,7 @@ public:
 
   Tile();
   Tile(Vector2 pos);
-  void draw(Screen &screen);
+  void draw(Screen &screen, SimpleTexture *texture);
 };
 
 class Barrel {
@@ -121,7 +121,7 @@ public:
   Barrel();
 
   void update(World *world, double dt);
-  void draw(Screen &screen);
+  void draw(Screen &screen, AnimatedTexture *texture);
 };
 
 class Player {
@@ -136,7 +136,7 @@ public:
   Player(Vector2 pos);
 
   void update(World *world, double dt);
-  void draw(Screen &screen);
+  void draw(Screen &screen, AnimatedTexture *texture);
 
   bool check_on_ladder(World *world);
 

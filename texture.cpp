@@ -25,7 +25,7 @@ void AnimationFrames::reset() {
 }
 
 AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
-    : frame_width(frame_width), frame_height(frame_height), state_count(0),
+    : frame_width(frame_width), frame_height(frame_height), animation_count(0),
       curr_animation(NULL), rect({0, 0, frame_width, frame_height}) {
   state_animations = new AnimationFrames[MAX_STATES];
   state_to_id_lookup = new int[MAX_STATES];
@@ -47,13 +47,13 @@ void AnimatedTexture::change_state(int state_val) {
 
 void AnimatedTexture::update(double delta) { curr_animation->update(delta); }
 
-void AnimatedTexture::add_state(int state_val, AnimationFrames frames) {
-  state_count++;
-  assert(state_count < MAX_STATES);
+void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
+  animation_count++;
+  assert(animation_count < MAX_STATES);
   assert(state_val < MAX_STATES);
 
-  state_animations[state_count] = frames;
-  state_to_id_lookup[state_val] = state_count;
+  state_animations[animation_count] = frames;
+  state_to_id_lookup[state_val] = animation_count;
 
   if (curr_animation == NULL) {
     curr_animation = &state_animations[0];

@@ -1,6 +1,7 @@
 #include "objects.cpp"
 #include "primitives.cpp"
 #include "screen.cpp"
+#include "texture.cpp"
 #include "world.cpp"
 
 class Game {

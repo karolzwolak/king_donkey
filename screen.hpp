@@ -22,6 +22,7 @@ class Screen {
 public:
   int width, height;
 
+  SDL_Texture *atlas;
   SDL_Surface *screen;
   SDL_Texture *scrtex;
   SDL_Window *window;
@@ -31,6 +32,8 @@ public:
   // draw a text txt on surface screen, starting from the point (x, y)
   // charset is a 128x128 bitmap containing character images
   void draw_string(int x, int y, const char *text, SDL_Surface *charset);
+
+  void draw_atlas_texture(SDL_Rect *sprite, int x, int y);
 
   // draw a surface sprite on a surface screen in point (x, y)
   // (x, y) is the left top corner

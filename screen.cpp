@@ -1,4 +1,5 @@
 #include "screen.hpp"
+#include "SDL2-2.0.10/include/SDL_render.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -27,6 +28,15 @@ void Screen::draw_string(int x, int y, const char *text, SDL_Surface *charset) {
   };
 };
 
+void Screen::draw_atlas_texture(SDL_Rect *sprite, int x, int y) {
+  SDL_Rect dest;
+  dest.x = x;
+  dest.y = y;
+  dest.w = sprite->w;
+  dest.h = sprite->h;
+  /* SDL_RenderCopy(renderer, atlas, sprite, &dest); */
+  SDL_RenderCopy(renderer, atlas, sprite, &dest);
+}
 // draw a surface sprite on a surface screen in point (x, y)
 // (x, y) is the top left corner of sprite on screen
 void Screen::draw_sprite(SDL_Surface *sprite, int x, int y) {
@@ -135,6 +145,14 @@ Screen::Screen(int w, int h) {
     throw "SDL_CreateWindowAndRenderer failed";
   };
 
+  SDL_Surface *surface = SDL_LoadBMP("resources/atlas.bmp");
+  atlas = SDL_CreateTextureFromSurface(renderer, surface);
+  if (atlas == NULL) {
+    throw "Cannot load file resources/atlas.png\n";
+    printf("Cannot load file resources/atlas.png\n");
+  }
+  SDL_FreeSurface(surface);
+
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -154,6 +172,7 @@ Screen::~Screen() {
   SDL_DestroyTexture(scrtex);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
+  SDL_DestroyTexture(atlas);
 
   SDL_Quit();
 }

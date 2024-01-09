@@ -11,10 +11,10 @@ public:
   Player player;
 
   SDL_Texture *atlas;
-  AnimatedTexture *player_texture;
-  AnimatedTexture *barrel_texture;
-  SimpleTexture *tile_texture;
-  SimpleTexture *ladder_texture;
+  AnimatedTexture player_texture;
+  AnimatedTexture barrel_texture;
+  SimpleTexture tile_texture;
+  SimpleTexture ladder_texture;
 
   Ladder *ladders;
   int ladder_count;

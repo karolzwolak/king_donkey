@@ -1,4 +1,5 @@
 #include "objects.hpp"
+#include "texture.hpp"
 #include "world.hpp"
 
 int sign(float x) {
@@ -24,11 +25,10 @@ MoveDirection opposite_direction(MoveDirection dir) {
   }
 }
 
-Object::Object(Vector2 pos, int w, int h, SDL_Surface *s) {
+Object::Object(Vector2 pos, int w, int h) {
   position = pos;
   width = w;
   height = h;
-  sprite = s;
 }
 
 double Object::top() { return position.y; }
@@ -39,9 +39,12 @@ double Object::right() { return position.x + width; }
 double Object::center_x() { return position.x + width / 2.; }
 double Object::center_y() { return position.y + height / 2.; }
 
-void Object::draw(Screen *screen) {
-  /* screen->draw_sprite(sprite, position.x, position.y); */
-  screen->draw_rect(position.x, position.y, width, height, 0x000000, 0x00ff00);
+void Object::draw_simple(Screen *screen, SimpleTexture *texture) {
+  screen->draw_atlas_texture(&texture->rect, position.x, position.y);
+}
+
+void Object::draw_animated(Screen *screen, AnimatedTexture *texture) {
+  screen->draw_atlas_texture(texture->get_curr_frame(), position.x, position.y);
 }
 
 bool Object::collides_with(Object *obj) {
@@ -49,15 +52,15 @@ bool Object::collides_with(Object *obj) {
          top() < obj->bottom() && bottom() > obj->top();
 }
 
-Ladder::Ladder(Vector2 pos, int w, int h) : obj(Object(pos, w, h, NULL)) {}
-Ladder::Ladder() : obj(Object(Vector2(0, 0), 0, 0, NULL)) {}
+Ladder::Ladder(Vector2 pos, int w, int h) : obj(Object(pos, w, h)) {}
+Ladder::Ladder() : obj(Object(Vector2(0, 0), 0, 0)) {}
 
-void Ladder::draw(Screen &screen) { obj.draw(&screen); }
+/* void Ladder::draw(Screen &screen) { obj.draw(&screen); } */
 
-Tile::Tile() : obj(Object(Vector2(0, 0), 0, 0, NULL)) {}
-Tile::Tile(Vector2 pos) : obj(Object(pos, TILE_WIDTH, TILE_HEIGHT, NULL)) {}
+Tile::Tile() : obj(Object(Vector2(0, 0), 0, 0)) {}
+Tile::Tile(Vector2 pos) : obj(Object(pos, TILE_WIDTH, TILE_HEIGHT)) {}
 
-void Tile::draw(Screen &screen) { obj.draw(&screen); }
+/* void Tile::draw(Screen &screen) { obj.draw(&screen); } */
 
 Dynamic::Dynamic() {
   velocity = Vector2(0, 0);
@@ -169,7 +172,7 @@ void Dynamic::update(Object &obj, MoveDirection dir, World *world, double dt) {
 }
 
 Player::Player(Vector2 pos, int w, int h)
-    : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), on_ladder(false),
+    : dynamic(Dynamic()), obj(Object(pos, w, h)), on_ladder(false),
       move_direction(NONE) {}
 
 void Player::player_vertical_movement(double dt) {
@@ -191,7 +194,7 @@ void Player::player_vertical_movement(double dt) {
 }
 
 Barrel::Barrel(Vector2 pos, int w, int h, MoveDirection dir)
-    : dynamic(Dynamic()), obj(Object(pos, w, h, NULL)), move_direction(dir) {}
+    : dynamic(Dynamic()), obj(Object(pos, w, h)), move_direction(dir) {}
 
 Barrel::Barrel(Vector2 pos, MoveDirection dir)
     : Barrel(pos, BARREL_WIDTH, BARREL_HEIGHT, dir){};
@@ -211,7 +214,7 @@ void Barrel::update(World *world, double dt) {
   }
 }
 
-void Barrel::draw(Screen &screen) { obj.draw(&screen); }
+/* void Barrel::draw(Screen &screen) { obj.draw(&screen); } */
 
 void Player::update(World *world, double dt) {
   dynamic.horizontal_movement(obj.position, move_direction, dt);
@@ -257,7 +260,9 @@ void Player::get_off_ladder() {
   move_direction = NONE;
 }
 
-void Player::draw(Screen &screen) { obj.draw(&screen); }
+void Player::draw(Screen &screen, AnimatedTexture *texture) {
+  obj.draw_animated(&screen, texture);
+}
 
 void Player::move(MoveDirection dir, bool key_down) {
   // if lifted different key, stop moving

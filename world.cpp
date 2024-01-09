@@ -1,12 +1,16 @@
 #include "world.hpp"
 #include "objects.hpp"
+#include "texture.hpp"
 
 World::World(int w, int h)
     : width(w), height(h), player(Player(Vector2(10, 10))), tiles(NULL),
-      tile_count(0), ladders(NULL), ladder_count(0), atlas(NULL) {
+      tile_count(0), ladders(NULL), ladder_count(0), atlas(NULL),
+      player_texture(NULL), barrel_texture(NULL), tile_texture(NULL),
+      ladder_texture(NULL), barrels(NULL), barrel_count(0) {
 
-  // loa the texture atlas
-  SDL_Surface *surface = IMG_Load("resources/atlas.png");
+  player_texture = new AnimatedTexture(16, 16);
+  AnimationFrames player_run_frames = AnimationFrames(0, 17, 3, 1);
+  player_texture->add_animation(0, player_run_frames);
 
   tiles = new Tile[100];
   tile_count = 0;
@@ -49,16 +53,16 @@ void World::update(double dt) {
   }
 }
 void World::draw(Screen &screen) {
-  for (int i = 0; i < tile_count; i++) {
-    tiles[i].draw(screen);
-  }
-
-  for (int i = 0; i < ladder_count; i++) {
-    ladders[i].draw(screen);
-  }
-
-  for (int i = 0; i < barrel_count; i++) {
-    barrels[i].draw(screen);
-  }
-  player.draw(screen);
+  /* for (int i = 0; i < tile_count; i++) { */
+  /*   tiles[i].draw(screen); */
+  /* } */
+  /**/
+  /* for (int i = 0; i < ladder_count; i++) { */
+  /*   ladders[i].draw(screen); */
+  /* } */
+  /**/
+  /* for (int i = 0; i < barrel_count; i++) { */
+  /*   barrels[i].draw(screen); */
+  /* } */
+  player.draw(screen, player_texture);
 }
