@@ -48,12 +48,12 @@ void AnimatedTexture::change_state(int state_val) {
 void AnimatedTexture::update(double delta) { curr_animation->update(delta); }
 
 void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
-  animation_count++;
   assert(animation_count < MAX_STATES);
   assert(state_val < MAX_STATES);
 
   state_animations[animation_count] = frames;
   state_to_id_lookup[state_val] = animation_count;
+  animation_count++;
 
   if (curr_animation == NULL) {
     curr_animation = &state_animations[0];
@@ -61,7 +61,11 @@ void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
 }
 
 SDL_Rect *AnimatedTexture::get_curr_frame() {
+  assert(curr_animation != NULL);
   int frame_id = curr_animation->curr_frame;
+  printf("dframe_id: %d\n", frame_id);
+  printf("frame_width: %d\n", frame_width);
+  printf("frame_height: %d\n", frame_height);
   rect.x = curr_animation->atlas_x + frame_id * (frame_width + FRAME_PADDING);
   rect.y = curr_animation->atlas_y;
 

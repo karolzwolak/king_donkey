@@ -4,12 +4,12 @@
 
 World::World(int w, int h)
     : width(w), height(h), player(Player(Vector2(10, 10))), tiles(NULL),
-      tile_count(0), ladders(NULL), ladder_count(0), atlas(NULL),
-      player_texture(NULL), barrel_texture(NULL), tile_texture(NULL),
-      ladder_texture(NULL), barrels(NULL), barrel_count(0) {
+      tile_count(0), ladders(NULL), ladder_count(0), player_texture(NULL),
+      barrel_texture(NULL), tile_texture(NULL), ladder_texture(NULL),
+      barrels(NULL), barrel_count(0) {
 
   player_texture = new AnimatedTexture(16, 16);
-  AnimationFrames player_run_frames = AnimationFrames(0, 17, 3, 1);
+  AnimationFrames player_run_frames = AnimationFrames(0, 17, 3, 0);
   player_texture->add_animation(0, player_run_frames);
 
   tiles = new Tile[100];
@@ -47,6 +47,7 @@ Ladder *World::intersecting_ladder(Object *obj) {
 
 void World::update(double dt) {
   player.update(this, dt);
+  player_texture->update(dt);
 
   for (int i = 0; i < barrel_count; i++) {
     barrels[i].update(this, dt);

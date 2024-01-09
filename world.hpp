@@ -10,7 +10,6 @@ class World {
 public:
   Player player;
 
-  SDL_Texture *atlas;
   AnimatedTexture *player_texture;
   AnimatedTexture *barrel_texture;
   SimpleTexture *tile_texture;

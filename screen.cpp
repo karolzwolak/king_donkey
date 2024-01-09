@@ -34,8 +34,8 @@ void Screen::draw_atlas_texture(SDL_Rect *sprite, int x, int y) {
   dest.y = y;
   dest.w = sprite->w;
   dest.h = sprite->h;
-  /* SDL_RenderCopy(renderer, atlas, sprite, &dest); */
   SDL_RenderCopy(renderer, atlas, sprite, &dest);
+  /* SDL_BlitSurface(atlas, sprite, screen, &dest); */
 }
 // draw a surface sprite on a surface screen in point (x, y)
 // (x, y) is the top left corner of sprite on screen
@@ -77,6 +77,7 @@ void Screen::draw_rect(int x, int y, int l, int k, Uint32 outlineColor,
 
 void Screen::clear() {
   SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+  SDL_RenderClear(renderer);
   /* SDL_FillRect(screen.screen, NULL, czarny); */
 }
 
@@ -115,9 +116,9 @@ double Screen::tick() {
 }
 
 void Screen::render() {
-  SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-  SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+  /* SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch); */
+  /* SDL_RenderClear(renderer); */
+  /* SDL_RenderCopy(renderer, scrtex, NULL, NULL); */
   SDL_RenderPresent(renderer);
 }
 
@@ -145,14 +146,6 @@ Screen::Screen(int w, int h) {
     throw "SDL_CreateWindowAndRenderer failed";
   };
 
-  SDL_Surface *surface = SDL_LoadBMP("resources/atlas.bmp");
-  atlas = SDL_CreateTextureFromSurface(renderer, surface);
-  if (atlas == NULL) {
-    throw "Cannot load file resources/atlas.png\n";
-    printf("Cannot load file resources/atlas.png\n");
-  }
-  SDL_FreeSurface(surface);
-
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -165,6 +158,15 @@ Screen::Screen(int w, int h) {
   scrtex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                              SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH,
                              SCREEN_HEIGHT);
+
+  /* atlas = SDL_LoadBMP("resources/atlas.bmp"); */
+  SDL_Surface *surface = SDL_LoadBMP("resources/atlas.bmp");
+  atlas = SDL_CreateTextureFromSurface(renderer, surface);
+  if (atlas == NULL) {
+    throw "Cannot load file resources/atlas.png\n";
+    printf("Cannot load file resources/atlas.png\n");
+  }
+  SDL_FreeSurface(surface);
 }
 
 Screen::~Screen() {
@@ -172,7 +174,7 @@ Screen::~Screen() {
   SDL_DestroyTexture(scrtex);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  SDL_DestroyTexture(atlas);
+  /* SDL_DestroyTexture(atlas); */
 
   SDL_Quit();
 }

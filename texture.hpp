@@ -7,7 +7,7 @@
 
 class AnimationFrames {
 public:
-  constexpr static const double TIME_PER_FRAME = 0.1;
+  constexpr static const double TIME_PER_FRAME = 0.15;
 
   int atlas_x, atlas_y;
   int frame_count;
