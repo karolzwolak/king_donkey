@@ -9,6 +9,9 @@ class World {
 public:
   Player player;
 
+  // texture atlas
+  SDL_Texture *atlas;
+
   Ladder *ladders;
   int ladder_count;
 

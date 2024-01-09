@@ -2,3 +2,4 @@ SDL2-2.0.10
 libSDL2.a
 bin
 example.cpp
+resources/sprites.txt

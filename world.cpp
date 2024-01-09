@@ -3,7 +3,10 @@
 
 World::World(int w, int h)
     : width(w), height(h), player(Player(Vector2(10, 10))), tiles(NULL),
-      tile_count(0), ladders(NULL), ladder_count(0) {
+      tile_count(0), ladders(NULL), ladder_count(0), atlas(NULL) {
+
+  // loa the texture atlas
+  SDL_Surface *surface = IMG_Load("resources/atlas.png");
 
   tiles = new Tile[100];
   tile_count = 0;
