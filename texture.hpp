@@ -1,3 +1,5 @@
+#pragma once
+
 #include "./SDL2-2.0.10/include/SDL.h"
 
 #define ATLAS_PADDING 1
@@ -5,11 +7,20 @@
 
 class AnimationFrames {
 public:
+  constexpr static const double TIME_PER_FRAME = 0.1;
+
   int atlas_x, atlas_y;
   int frame_count;
+  int repeat_from_frame;
+  int curr_frame;
+  double timer;
 
   AnimationFrames();
-  AnimationFrames(int atlas_x, int atlas_y, int frame_count);
+  AnimationFrames(int atlas_x, int atlas_y, int frame_count,
+                  int repeat_from_frame);
+
+  void update(double delta);
+  void reset();
 };
 
 class AnimatedTexture {
@@ -20,16 +31,20 @@ public:
   /// each state is effectively an animation
   AnimationFrames *state_animations;
   ///  lookup to convert state into index of animation for easy access
+  AnimationFrames *curr_animation;
   int *state_to_id_lookup;
-  int state_count;
+  int animation_count;
 
   int frame_width, frame_height;
 
   AnimatedTexture(int frame_width, int frame_height);
   ~AnimatedTexture();
-  void add_state(int state_val, AnimationFrames frames);
+  void add_animation(int state_val, AnimationFrames frames);
 
-  SDL_Rect *get_frame(int state_val, int frame);
+  void change_state(int state_val);
+  void update(double delta);
+
+  SDL_Rect *get_curr_frame();
 };
 
 class SimpleTexture {
