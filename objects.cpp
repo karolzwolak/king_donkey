@@ -271,6 +271,9 @@ void Player::get_off_ladder() {
 }
 
 void Player::draw(Screen &screen, AnimatedTexture *texture) {
+  if (on_ladder) {
+    texture->change_state(1);
+  }
   dynamic.draw(obj, &screen, texture);
 }
 

@@ -127,12 +127,12 @@ public:
 };
 
 class Player {
-  Dynamic dynamic;
   Object obj;
   MoveDirection move_direction;
   bool on_ladder;
   /* PlayerState state; */
 public:
+  Dynamic dynamic;
   Player(Vector2 pos, int w, int h);
 
   Player(Vector2 pos);

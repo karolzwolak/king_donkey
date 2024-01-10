@@ -3,15 +3,20 @@
 
 AnimationFrames::AnimationFrames(int atlas_x, int atlas_y, int frame_count,
                                  double time_per_frame, int repeat_from_frame,
-                                 Orientation frame_orientation)
+                                 Orientation frame_orientation,
+                                 bool update_when_stationary)
     : atlas_x(atlas_x), atlas_y(atlas_y), frame_count(frame_count),
       repeat_from_frame(repeat_from_frame), curr_frame(0), timer(0),
       time_per_frame(time_per_frame), frame_orientation(frame_orientation),
-      curr_orientation(OR_NONE){};
+      curr_orientation(OR_NONE),
+      update_when_stationary(update_when_stationary){};
 
 AnimationFrames::AnimationFrames() : atlas_x(0), atlas_y(0), frame_count(0){};
 
-void AnimationFrames::update(double delta) {
+void AnimationFrames::update(double delta, bool stationary) {
+  if (stationary && !update_when_stationary) {
+    return;
+  }
   timer += delta;
   if (timer > time_per_frame) {
     timer = 0;
@@ -35,31 +40,42 @@ AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
     : frame_width(frame_width), frame_height(frame_height), animation_count(0),
       curr_animation(NULL), rect({0, 0, frame_width, frame_height}) {
   state_animations = new AnimationFrames[MAX_STATES];
-  state_to_id_lookup = new int[MAX_STATES];
+  id_to_state = new int[MAX_STATES];
 }
 
 AnimatedTexture::~AnimatedTexture() {
   delete[] state_animations;
-  delete[] state_to_id_lookup;
+  delete[] id_to_state;
+}
+
+AnimationFrames *AnimatedTexture::find_animation(int state_val) {
+  for (int i = 0; i < animation_count; i++) {
+    if (id_to_state[i] == state_val) {
+      return &state_animations[i];
+    }
+  }
+  return nullptr;
 }
 
 void AnimatedTexture::change_state(int state_val) {
-  assert(state_val < MAX_STATES);
-  int state_id = state_to_id_lookup[state_val];
-  if (&state_animations[state_id] != curr_animation) {
+  AnimationFrames *animation = find_animation(state_val);
+  assert(animation != nullptr);
+
+  if (animation != curr_animation) {
     curr_animation->reset();
   }
-  curr_animation = &state_animations[state_id];
+  curr_animation = animation;
 }
 
-void AnimatedTexture::update(double delta) { curr_animation->update(delta); }
+void AnimatedTexture::update(double delta, bool stationary) {
+  curr_animation->update(delta, stationary);
+}
 
 void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
   assert(animation_count < MAX_STATES);
-  assert(state_val < MAX_STATES);
 
   state_animations[animation_count] = frames;
-  state_to_id_lookup[state_val] = animation_count;
+  id_to_state[animation_count] = state_val;
   animation_count++;
 
   if (curr_animation == NULL) {

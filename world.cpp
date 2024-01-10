@@ -11,7 +11,10 @@ World::World(int w, int h)
   player_texture = new AnimatedTexture(16, 16);
   AnimationFrames player_run_frames =
       AnimationFrames(0, 17, 3, 0.1, 0, OR_RIGHT);
+  AnimationFrames player_climb_frames =
+      AnimationFrames(49, 17, 2, 0.15, 0, OR_NONE, false);
   player_texture->add_animation(0, player_run_frames);
+  player_texture->add_animation(1, player_climb_frames);
 
   tile_texture = new SimpleTexture(60, 35, 16, 8);
 
@@ -50,7 +53,8 @@ Ladder *World::intersecting_ladder(Object *obj) {
 
 void World::update(double dt) {
   player.update(this, dt);
-  player_texture->update(dt);
+  player_texture->update(dt, player.dynamic.velocity.x == 0 &&
+                                 player.dynamic.velocity.y == 0);
 
   for (int i = 0; i < barrel_count; i++) {
     barrels[i].update(this, dt);

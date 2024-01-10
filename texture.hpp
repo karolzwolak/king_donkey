@@ -20,13 +20,15 @@ public:
   Orientation curr_orientation;
   double time_per_frame;
   double timer;
+  bool update_when_stationary;
 
   AnimationFrames();
   AnimationFrames(int atlas_x, int atlas_y, int frame_count,
                   double time_per_frame, int repeat_from_frame,
-                  Orientation frame_orientation = DEFAULT_ORIENTATION);
+                  Orientation frame_orientation = DEFAULT_ORIENTATION,
+                  bool update_when_stationary = true);
 
-  void update(double delta);
+  void update(double delta, bool stationary);
   void reset();
   bool needs_flipping();
 };
@@ -40,7 +42,7 @@ public:
   AnimationFrames *state_animations;
   ///  lookup to convert state into index of animation for easy access
   AnimationFrames *curr_animation;
-  int *state_to_id_lookup;
+  int *id_to_state;
   int animation_count;
 
   int frame_width, frame_height;
@@ -50,8 +52,10 @@ public:
   void add_animation(int state_val, AnimationFrames frames);
 
   void change_state(int state_val);
-  void update(double delta);
+  void update(double delta, bool stationary);
   void change_orientation(Orientation orientation);
+
+  AnimationFrames *find_animation(int state_val);
 
   SDL_Rect *get_curr_frame();
   void draw(Screen *screen, int x, int y);
