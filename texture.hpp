@@ -14,12 +14,9 @@ public:
   int atlas_x, atlas_y;
   int frame_count;
   int repeat_from_frame;
-  int curr_frame;
 
-  Orientation frame_orientation;
-  Orientation curr_orientation;
   double time_per_frame;
-  double timer;
+  Orientation frame_orientation;
   bool update_when_stationary;
 
   AnimationFrames();
@@ -27,10 +24,6 @@ public:
                   double time_per_frame, int repeat_from_frame,
                   Orientation frame_orientation = DEFAULT_ORIENTATION,
                   bool update_when_stationary = true);
-
-  void update(double delta, bool stationary);
-  void reset();
-  bool needs_flipping();
 };
 
 class AnimatedTexture {
@@ -43,7 +36,12 @@ public:
   ///  lookup to convert state into index of animation for easy access
   AnimationFrames *curr_animation;
   int *id_to_state;
+  int curr_state;
   int animation_count;
+
+  double timer;
+  int curr_frame;
+  Orientation curr_orientation;
 
   int frame_width, frame_height;
 
@@ -56,6 +54,8 @@ public:
   void change_orientation(Orientation orientation);
 
   AnimationFrames *find_animation(int state_val);
+
+  void reset_animation();
 
   SDL_Rect *get_curr_frame();
   void draw(Screen *screen, int x, int y);
