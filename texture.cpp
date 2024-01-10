@@ -46,6 +46,10 @@ bool AnimatedTexture::needs_flipping() {
 }
 
 void AnimatedTexture::change_state(int state_val) {
+  if (state_val == curr_state) {
+    return;
+  }
+
   AnimationFrames *animation = find_animation(state_val);
   assert(animation != nullptr);
   curr_state = state_val;

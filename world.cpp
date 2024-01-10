@@ -35,7 +35,8 @@ World::World(int w, int h)
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 10, ladder_texture);
   tiles[tile_count++] = Tile(Vector2(100, 100), tile_texture);
 
-  barrels[barrel_count++] = Barrel(Vector2(100, 80), DIR_LEFT, barrel_texture);
+  barrels[barrel_count++] = Barrel(Vector2(100, 80), DIR_RIGHT, barrel_texture);
+  barrels[barrel_count++] = Barrel(Vector2(120, 80), DIR_LEFT, barrel_texture);
 }
 
 Ladder *World::intersecting_ladder(DynamicObject *obj) {

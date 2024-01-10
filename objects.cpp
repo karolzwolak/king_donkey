@@ -198,8 +198,17 @@ void DynamicObject::vertical_movement(MoveDirection dir, double dt) {
     fall_dist = 0;
 }
 
-void DynamicObject::update(MoveDirection dir, World *world, double dt) {
+void DynamicObject::update_texture(double dt, int state) {
   texture->update(dt, velocity.x == 0 && velocity.y == 0);
+  texture->change_orientation(orientation);
+
+  if (state >= 0)
+    texture->change_state(state);
+}
+
+void DynamicObject::update(MoveDirection dir, World *world, double dt) {
+  update_texture(dt);
+
   horizontal_movement(dir, dt);
   check_tile_collisions_x(world);
 
@@ -208,7 +217,6 @@ void DynamicObject::update(MoveDirection dir, World *world, double dt) {
 }
 
 void DynamicObject::draw(Screen *screen) {
-  texture->change_orientation(orientation);
   texture->draw(screen, rect_obj.pos.x, rect_obj.pos.y);
 }
 
@@ -300,6 +308,8 @@ void Barrel::draw(Screen &screen) { dynamic_obj.draw(&screen); }
 RectObject &Player::get_rect() { return dynamic_obj.rect_obj; }
 
 void Player::update(World *world, double dt) {
+  dynamic_obj.update_texture(dt);
+
   dynamic_obj.horizontal_movement(move_direction, dt);
   if (!on_ladder)
     dynamic_obj.check_tile_collisions_x(world);
