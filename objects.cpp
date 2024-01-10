@@ -50,9 +50,16 @@ bool RectObject::collides_with(RectObject *obj) {
          top() < obj->bottom() && bottom() > obj->top();
 }
 
-Ladder::Ladder(Vector2 pos, int w, int h, SimpleTexture *texture)
-    : static_obj(pos, w, h, texture) {}
-Ladder::Ladder() : Ladder(Vector2(0, 0), 0, 0, NULL) {}
+Ladder::Ladder(Vector2 pos, int parts, SimpleTexture *texture)
+    : static_obj(pos, LADDER_WIDTH, parts * LADDER_HEIGHT, texture),
+      parts(parts) {}
+
+Ladder::Ladder() : Ladder(Vector2(0, 0), 0, NULL) {}
+
+SimpleTexture *Ladder::create_texture() {
+  SimpleTexture *texture = new SimpleTexture(50, 35, 8, 8);
+  return texture;
+}
 
 RectObject *Ladder::get_rect() { return &static_obj.obj; }
 
@@ -63,12 +70,24 @@ void StaticObject::draw(Screen *screen) {
   screen->draw_atlas_texture(&texture->rect, obj.pos.x, obj.pos.y);
 }
 
-/* void Ladder::draw(Screen &screen) { obj.draw(&screen); } */
+void Ladder::draw(Screen &screen) {
+  Vector2 pos = static_obj.obj.pos;
+
+  for (int i = 0; i < static_obj.obj.height; i += LADDER_HEIGHT) {
+    static_obj.obj.pos.y = pos.y + i;
+    static_obj.draw(&screen);
+  }
+  static_obj.obj.pos = pos;
+}
 
 Tile::Tile(Vector2 pos, SimpleTexture *texture)
     : static_obj(pos, TILE_WIDTH, TILE_HEIGHT, texture) {}
 
 Tile::Tile() : Tile(Vector2(0, 0), NULL) {}
+
+SimpleTexture *Tile::create_texture() {
+  return new SimpleTexture(60, 35, 16, 8);
+}
 
 RectObject *Tile::get_rect() { return &static_obj.obj; }
 
@@ -218,6 +237,7 @@ AnimatedTexture *Player::create_texture() {
 
 void Player::player_vertical_movement(double dt) {
   if (on_ladder) {
+    state = CLIMBING;
     switch (move_direction) {
     case DIR_UP:
       dynamic_obj.velocity.y = -CLIMB_VELOCITY;
@@ -231,7 +251,7 @@ void Player::player_vertical_movement(double dt) {
     }
   }
 
-  if (dynamic_obj.coyote_on_ground) {
+  else if (dynamic_obj.coyote_on_ground) {
     if (dynamic_obj.velocity.x == 0) {
       state = IDLE;
     } else {
@@ -285,15 +305,23 @@ void Player::update(World *world, double dt) {
 
   player_vertical_movement(dt);
 
-  if (on_ladder && world->intersecting_ladder(&dynamic_obj) == NULL) {
+  Ladder *ladder = world->intersecting_ladder(&dynamic_obj);
+  if (on_ladder && ladder == NULL) {
     get_off_ladder();
+    dynamic_obj.check_tile_collisions_y(world);
+    return;
   }
 
-  if (!on_ladder || move_direction == DIR_DOWN) {
+  if (!on_ladder) {
     dynamic_obj.check_tile_collisions_y(world);
-    // get off ladder early if there is ground above it
-    if (on_ladder && dynamic_obj.on_ground)
-      get_off_ladder();
+    return;
+  }
+  if (move_direction == DIR_DOWN &&
+      ladder->get_rect()->bottom() < get_rect().bottom()) {
+    // first check collisions, because get off ladder adds upwards velocity
+    //  which would cause player to clip through ground
+    dynamic_obj.check_tile_collisions_y(world);
+    get_off_ladder();
   }
 }
 

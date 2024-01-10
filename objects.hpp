@@ -17,6 +17,9 @@ const float CLIMB_VELOCITY = 50;
 const int TILE_WIDTH = 16;
 const int TILE_HEIGHT = 8;
 
+const int LADDER_WIDTH = 8;
+const int LADDER_HEIGHT = 8;
+
 const int PLAYER_WIDTH = 16;
 const int PLAYER_HEIGHT = 16;
 
@@ -71,6 +74,7 @@ public:
   SimpleTexture *texture;
 
   StaticObject(Vector2 pos, int w, int h, SimpleTexture *texture);
+  StaticObject(StaticObject &other);
   /* ~StaticObject(); */
   void draw(Screen *screen);
 };
@@ -108,10 +112,12 @@ class Ladder {
 
 public:
   StaticObject static_obj;
+  int parts;
 
   Ladder();
-  Ladder(Vector2 pos, int w, int h, SimpleTexture *texture);
+  Ladder(Vector2 pos, int parts, SimpleTexture *texture);
   /* ~Ladder(); */
+  static SimpleTexture *create_texture();
 
   RectObject *get_rect();
   void draw(Screen &screen);
@@ -125,7 +131,7 @@ public:
   Tile(Vector2 pos, SimpleTexture *texture);
   Tile();
   /* ~Tile(); */
-
+  static SimpleTexture *create_texture();
   RectObject *get_rect();
   void draw(Screen &screen);
 };
