@@ -42,7 +42,7 @@ World::World(int w, int h, TextureManager &textures)
   tiles[tile_count++] = Tile(Vector2(100, 100), &textures.tile_texture);
 
   barrels[barrel_count++] =
-      Barrel(Vector2(10, 20), DIR_RIGHT, &textures.barrel_texture);
+      Barrel(Vector2(60, 80), DIR_RIGHT, &textures.barrel_texture);
   barrels[barrel_count++] =
       Barrel(Vector2(0, 20), DIR_LEFT, &textures.barrel_texture);
 }

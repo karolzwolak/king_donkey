@@ -24,7 +24,11 @@ void Screen::draw_string(int x, int y, const char *text, SDL_Surface *charset) {
   };
 };
 
-void Screen::draw_atlas_texture(SDL_Rect *sprite, int x, int y, bool flip) {
+void Screen::draw_atlas_texture(SDL_Rect *sprite, double _x, double _y,
+                                bool flip) {
+  int x = round(_x);
+  int y = round(_y);
+
   SDL_Rect dest;
   dest.x = x;
   dest.y = y;
