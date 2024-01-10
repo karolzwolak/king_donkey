@@ -25,6 +25,7 @@ public:
   int barrel_count;
 
   World(int w, int h);
+  ~World();
 
   void update(double dt);
   Ladder *intersecting_ladder(DynamicObject *obj);

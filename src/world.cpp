@@ -49,6 +49,16 @@ World::World(int w, int h)
   barrels[barrel_count++] = Barrel(Vector2(0, 20), DIR_LEFT, barrel_texture);
 }
 
+World::~World() {
+  delete[] tiles;
+  delete[] ladders;
+  delete[] barrels;
+  delete player_texture;
+  delete barrel_texture;
+  delete tile_texture;
+  delete ladder_texture;
+}
+
 Ladder *World::intersecting_ladder(DynamicObject *obj) {
   for (int i = 0; i < ladder_count; i++) {
     if (obj->rect_obj.collides_with(ladders[i].get_rect())) {
@@ -65,6 +75,7 @@ void World::update(double dt) {
     barrels[i].update(this, dt);
   }
 }
+
 void World::draw(Screen &screen) {
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);

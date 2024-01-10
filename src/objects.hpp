@@ -74,7 +74,6 @@ public:
 
   StaticObject(Vector2 pos, int w, int h, SimpleTexture *texture);
   StaticObject(StaticObject &other);
-  /* ~StaticObject(); */
   void draw(Screen *screen);
 };
 
@@ -92,7 +91,6 @@ public:
 
 public:
   DynamicObject(Vector2 pos, int w, int h, AnimatedTexture *texture);
-  /* ~DynamicObject(); */
 
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
@@ -116,7 +114,6 @@ public:
 
   Ladder();
   Ladder(Vector2 pos, int parts, SimpleTexture *texture);
-  /* ~Ladder(); */
   static SimpleTexture *create_texture();
 
   RectObject *get_rect();
@@ -130,7 +127,7 @@ public:
 
   Tile(Vector2 pos, SimpleTexture *texture);
   Tile();
-  /* ~Tile(); */
+
   static SimpleTexture *create_texture();
   RectObject *get_rect();
   void draw(Screen &screen);
@@ -161,8 +158,6 @@ class Player {
 public:
   DynamicObject dynamic_obj;
   Player(Vector2 pos, AnimatedTexture *texture);
-  /* ~Player(); */
-  /* Player(Vector2 pos); */
 
   static AnimatedTexture *create_texture();
 

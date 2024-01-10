@@ -36,15 +36,6 @@ double RectObject::right() { return pos.x + width; }
 double RectObject::center_x() { return pos.x + width / 2.; }
 double RectObject::center_y() { return pos.y + height / 2.; }
 
-/* void RectObject::draw_simple(Screen *screen, SimpleTexture *texture) { */
-/*   screen->draw_atlas_texture(&texture->rect, pos.x, pos.y); */
-/* } */
-/**/
-/* void RectObject::draw_animated(Screen *screen, AnimatedTexture *texture) { */
-/*   texture->draw(screen, pos.x, pos.y); */
-/* } */
-/**/
-
 bool RectObject::collides_with(RectObject *obj) {
   return left() < obj->right() && right() > obj->left() &&
          top() < obj->bottom() && bottom() > obj->top();

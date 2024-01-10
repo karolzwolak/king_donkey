@@ -160,7 +160,6 @@ Screen::Screen(int w, int h) {
                              SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH,
                              SCREEN_HEIGHT);
 
-  /* atlas = SDL_LoadBMP("resources/atlas.bmp"); */
   SDL_Surface *surface = SDL_LoadBMP("assets/atlas.bmp");
   atlas = SDL_CreateTextureFromSurface(renderer, surface);
   if (atlas == NULL) {
@@ -178,126 +177,7 @@ Screen::~Screen() {
   SDL_DestroyTexture(scrtex);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
-  /* SDL_DestroyTexture(atlas); */
+  SDL_DestroyTexture(atlas);
 
   SDL_Quit();
-}
-
-int example() {
-  int t1, t2, quit, frames, rc;
-  double delta, worldTime, fpsTimer, fps, distance, etiSpeed;
-  SDL_Event event;
-  SDL_Surface *charset;
-  SDL_Surface *eti;
-
-  Screen screen(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-  // wy³¹czenie widocznoci kursora myszy
-  SDL_ShowCursor(SDL_DISABLE);
-
-  // wczytanie obrazka cs8x8.bmp
-  charset = SDL_LoadBMP("resources/cs8x8.bmp");
-  if (charset == NULL) {
-    printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
-    return 1;
-  };
-  SDL_SetColorKey(charset, true, 0x000000);
-
-  eti = SDL_LoadBMP("resources/eti.bmp");
-  if (eti == NULL) {
-    printf("SDL_LoadBMP(eti.bmp) error: %s\n", SDL_GetError());
-    SDL_FreeSurface(charset);
-    return 1;
-  };
-
-  char text[128];
-  int czarny = SDL_MapRGB(screen.screen->format, 0x00, 0x00, 0x00);
-  int zielony = SDL_MapRGB(screen.screen->format, 0x00, 0xFF, 0x00);
-  int czerwony = SDL_MapRGB(screen.screen->format, 0xFF, 0x00, 0x00);
-  int niebieski = SDL_MapRGB(screen.screen->format, 0x11, 0x11, 0xCC);
-
-  t1 = SDL_GetTicks();
-
-  frames = 0;
-  fpsTimer = 0;
-  fps = 0;
-  quit = 0;
-  worldTime = 0;
-  distance = 0;
-  etiSpeed = 1;
-
-  while (!quit) {
-    t2 = SDL_GetTicks();
-
-    // here t2-t1 is the time in milliseconds since
-    // the last screen was drawn
-    // delta is the same time in seconds
-    delta = (t2 - t1) * 0.001;
-    t1 = t2;
-
-    worldTime += delta;
-
-    distance += etiSpeed * delta;
-
-    SDL_FillRect(screen.screen, NULL, czarny);
-
-    screen.draw_sprite(eti,
-                       SCREEN_WIDTH / 2 + sin(distance) * SCREEN_HEIGHT / 3,
-                       SCREEN_HEIGHT / 2 + cos(distance) * SCREEN_HEIGHT / 3);
-
-    fpsTimer += delta;
-    if (fpsTimer > 0.5) {
-      fps = frames * 2;
-      frames = 0;
-      fpsTimer -= 0.5;
-    };
-
-    // tekst informacyjny / info text
-    screen.draw_rect(4, 4, SCREEN_WIDTH - 8, 36, czerwony, niebieski);
-    //            "template for the second project, elapsed time = %.1lf s %.0lf
-    //            frames / s"
-    sprintf(
-        text,
-        "Szablon drugiego zadania, czas trwania = %.1lf s  %.0lf klatek / s",
-        worldTime, fps);
-    screen.draw_string(screen.width / 2 - strlen(text) * 8 / 2, 10, text,
-                       charset);
-    //	      "Esc - exit, \030 - faster, \031 - slower"
-    sprintf(text, "Esc - wyjscie, \030 - przyspieszenie, \031 - zwolnienie");
-    screen.draw_string(screen.width / 2 - strlen(text) * 8 / 2, 26, text,
-                       charset);
-
-    SDL_UpdateTexture(screen.scrtex, NULL, screen.screen->pixels,
-                      screen.screen->pitch);
-    //		SDL_RenderClear(renderer);
-    SDL_RenderCopy(screen.renderer, screen.scrtex, NULL, NULL);
-    SDL_RenderPresent(screen.renderer);
-
-    // obs³uga zdarzeñ (o ile jakie zasz³y) / handling of events (if there
-    // were any)
-    while (SDL_PollEvent(&event)) {
-      switch (event.type) {
-      case SDL_KEYDOWN:
-        if (event.key.keysym.sym == SDLK_ESCAPE)
-          quit = 1;
-        else if (event.key.keysym.sym == SDLK_UP)
-          etiSpeed = 2.0;
-        else if (event.key.keysym.sym == SDLK_DOWN)
-          etiSpeed = 0.3;
-        break;
-      case SDL_KEYUP:
-        etiSpeed = 1.0;
-        break;
-      case SDL_QUIT:
-        quit = 1;
-        break;
-      };
-    };
-    frames++;
-  };
-
-  // zwolnienie powierzchni / freeing all surfaces
-  SDL_FreeSurface(charset);
-
-  return 0;
 }
