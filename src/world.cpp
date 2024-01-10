@@ -1,6 +1,5 @@
 #include "world.hpp"
 #include "objects.hpp"
-#include "texture.hpp"
 
 World::World(int w, int h)
     : width(w), height(h), player(Vector2(0, 0), NULL), tiles(NULL),

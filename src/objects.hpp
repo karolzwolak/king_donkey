@@ -1,6 +1,5 @@
 #pragma once
 
-#include "./SDL2-2.0.10/include/SDL.h"
 #include "primitives.hpp"
 #include "screen.hpp"
 #include "texture.hpp"

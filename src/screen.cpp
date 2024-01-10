@@ -1,5 +1,5 @@
 #include "screen.hpp"
-#include "SDL2-2.0.10/include/SDL_render.h"
+#include "../SDL2-2.0.10/include/SDL_render.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -165,7 +165,7 @@ Screen::Screen(int w, int h) {
                              SCREEN_HEIGHT);
 
   /* atlas = SDL_LoadBMP("resources/atlas.bmp"); */
-  SDL_Surface *surface = SDL_LoadBMP("resources/atlas.bmp");
+  SDL_Surface *surface = SDL_LoadBMP("assets/atlas.bmp");
   atlas = SDL_CreateTextureFromSurface(renderer, surface);
   if (atlas == NULL) {
     throw "Cannot load file resources/atlas.png\n";

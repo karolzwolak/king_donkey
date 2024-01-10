@@ -1,6 +1,5 @@
 #pragma once
 
-#include "./SDL2-2.0.10/include/SDL.h"
 #include "screen.hpp"
 
 #define ATLAS_PADDING 1
