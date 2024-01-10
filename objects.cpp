@@ -25,79 +25,88 @@ MoveDirection opposite_direction(MoveDirection dir) {
   }
 }
 
-Object::Object(Vector2 pos, int w, int h) {
-  position = pos;
-  width = w;
-  height = h;
-}
+RectObject::RectObject(Vector2 pos, int w, int h)
+    : pos(pos), width(w), height(h) {}
 
-double Object::top() { return position.y; }
-double Object::bottom() { return position.y + height; }
-double Object::left() { return position.x; }
-double Object::right() { return position.x + width; }
+double RectObject::top() { return pos.y; }
+double RectObject::bottom() { return pos.y + height; }
+double RectObject::left() { return pos.x; }
+double RectObject::right() { return pos.x + width; }
 
-double Object::center_x() { return position.x + width / 2.; }
-double Object::center_y() { return position.y + height / 2.; }
+double RectObject::center_x() { return pos.x + width / 2.; }
+double RectObject::center_y() { return pos.y + height / 2.; }
 
-void Object::draw_simple(Screen *screen, SimpleTexture *texture) {
-  screen->draw_atlas_texture(&texture->rect, position.x, position.y);
-}
+/* void RectObject::draw_simple(Screen *screen, SimpleTexture *texture) { */
+/*   screen->draw_atlas_texture(&texture->rect, pos.x, pos.y); */
+/* } */
+/**/
+/* void RectObject::draw_animated(Screen *screen, AnimatedTexture *texture) { */
+/*   texture->draw(screen, pos.x, pos.y); */
+/* } */
+/**/
 
-void Object::draw_animated(Screen *screen, AnimatedTexture *texture) {
-  texture->draw(screen, position.x, position.y);
-}
-
-bool Object::collides_with(Object *obj) {
+bool RectObject::collides_with(RectObject *obj) {
   return left() < obj->right() && right() > obj->left() &&
          top() < obj->bottom() && bottom() > obj->top();
 }
 
-Ladder::Ladder(Vector2 pos, int w, int h) : obj(Object(pos, w, h)) {}
-Ladder::Ladder() : obj(Object(Vector2(0, 0), 0, 0)) {}
+Ladder::Ladder(Vector2 pos, int w, int h, SimpleTexture *texture)
+    : static_obj(pos, w, h, texture) {}
+Ladder::Ladder() : Ladder(Vector2(0, 0), 0, 0, NULL) {}
+
+RectObject *Ladder::get_rect() { return &static_obj.obj; }
+
+StaticObject::StaticObject(Vector2 pos, int w, int h, SimpleTexture *texture)
+    : obj(pos, w, h), texture(texture) {}
+
+void StaticObject::draw(Screen *screen) {
+  screen->draw_atlas_texture(&texture->rect, obj.pos.x, obj.pos.y);
+}
 
 /* void Ladder::draw(Screen &screen) { obj.draw(&screen); } */
 
-Tile::Tile() : obj(Object(Vector2(0, 0), 0, 0)) {}
-Tile::Tile(Vector2 pos) : obj(Object(pos, TILE_WIDTH, TILE_HEIGHT)) {}
+Tile::Tile(Vector2 pos, SimpleTexture *texture)
+    : static_obj(pos, TILE_WIDTH, TILE_HEIGHT, texture) {}
 
-void Tile::draw(Screen &screen, SimpleTexture *texture) {
-  obj.draw_simple(&screen, texture);
-}
+Tile::Tile() : Tile(Vector2(0, 0), NULL) {}
 
-Dynamic::Dynamic() {
-  velocity = Vector2(0, 0);
-  acceleration = Vector2(0, GRAVITY);
-  on_ground = false;
-  orientation = OR_NONE;
-}
+RectObject *Tile::get_rect() { return &static_obj.obj; }
 
-void Dynamic::limit_velocity() {
+void Tile::draw(Screen &screen) { static_obj.draw(&screen); }
+
+DynamicObject::DynamicObject(Vector2 pos, int w, int h,
+                             AnimatedTexture *texture)
+    : rect_obj(pos, w, h), texture(texture), velocity(0, 0),
+      acceleration(0, GRAVITY), on_ground(false), orientation(OR_NONE) {}
+
+void DynamicObject::limit_velocity() {
   if (abs(velocity.x) > MAX_VELOCITY)
     velocity.x = sign(velocity.x) * MAX_VELOCITY;
   if (abs(velocity.y) > MAX_VELOCITY)
     velocity.y = sign(velocity.y) * MAX_VELOCITY;
 }
 
-void Dynamic::set_velocity(Vector2 v) { velocity = v; }
+void DynamicObject::set_velocity(Vector2 v) { velocity = v; }
 
-void Dynamic::set_acceleration_x(float x) { acceleration.x = x; }
+void DynamicObject::set_acceleration_x(float x) { acceleration.x = x; }
 
-bool Dynamic::check_tile_collisions_x(Object *obj, World *world) {
+bool DynamicObject::check_tile_collisions_x(World *world) {
   for (int i = 0; i < world->tile_count; i++) {
-    if (obj->collides_with(&world->tiles[i].obj)) {
+    RectObject *tile_rect = world->tiles[i].get_rect();
+    if (rect_obj.collides_with(tile_rect)) {
 
-      double elevation_dist = obj->bottom() - world->tiles[i].obj.top();
+      double elevation_dist = rect_obj.bottom() - tile_rect->top();
       if (velocity.y == 0 && elevation_dist > 0 &&
           elevation_dist <= CLIMB_THRESHOLD) {
-        obj->position.y -= elevation_dist;
+        rect_obj.pos.y -= elevation_dist;
         return true;
       }
 
       bool collision_from_left = velocity.x > 0;
       if (collision_from_left)
-        obj->position.x = world->tiles[i].obj.left() - obj->width;
+        rect_obj.pos.x = tile_rect->left() - rect_obj.width;
       else {
-        obj->position.x = world->tiles[i].obj.right();
+        rect_obj.pos.x = tile_rect->right();
       }
 
       velocity.x = 0;
@@ -109,20 +118,22 @@ bool Dynamic::check_tile_collisions_x(Object *obj, World *world) {
   return false;
 }
 
-bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
+bool DynamicObject::check_tile_collisions_y(World *world) {
   on_ground = false;
 
   for (int i = 0; i < world->tile_count; i++) {
-    if (obj->collides_with(&world->tiles[i].obj)) {
+
+    RectObject *tile_rect = world->tiles[i].get_rect();
+    if (rect_obj.collides_with(tile_rect)) {
 
       bool collision_from_top = velocity.y > 0;
       if (collision_from_top) {
-        obj->position.y = world->tiles[i].obj.top() - obj->height;
+        rect_obj.pos.y = tile_rect->top() - rect_obj.height;
         on_ground = true;
         coyote_on_ground = true;
 
       } else {
-        obj->position.y = world->tiles[i].obj.bottom();
+        rect_obj.pos.y = tile_rect->bottom();
       }
 
       velocity.y = 0;
@@ -137,7 +148,7 @@ bool Dynamic::check_tile_collisions_y(Object *obj, World *world) {
   return false;
 }
 
-void Dynamic::horizontal_movement(Vector2 &pos, MoveDirection dir, double dt) {
+void DynamicObject::horizontal_movement(MoveDirection dir, double dt) {
   velocity.x = 0;
 
   if (dir == DIR_LEFT) {
@@ -151,88 +162,92 @@ void Dynamic::horizontal_movement(Vector2 &pos, MoveDirection dir, double dt) {
   velocity.x += acceleration.x * dt;
   limit_velocity();
 
-  pos.x += velocity.x * dt + acceleration.x * 0.5 * dt * dt;
+  rect_obj.pos.x += velocity.x * dt + acceleration.x * 0.5 * dt * dt;
 }
 
-void Dynamic::vertical_movement(Vector2 &pos, MoveDirection dir, double dt) {
+void DynamicObject::vertical_movement(MoveDirection dir, double dt) {
   velocity.y += acceleration.y * dt;
 
   limit_velocity();
 
-  double y = pos.y;
-  pos.y += velocity.y * dt + acceleration.y * 0.5 * dt * dt;
+  double y = rect_obj.pos.y;
+  rect_obj.pos.y += velocity.y * dt + acceleration.y * 0.5 * dt * dt;
 
   if (!on_ground && velocity.y > 0)
-    fall_dist += pos.y - y;
+    fall_dist += rect_obj.pos.y - y;
   else
     fall_dist = 0;
 }
 
-void Dynamic::update(Object &obj, MoveDirection dir, World *world, double dt) {
-  horizontal_movement(obj.position, dir, dt);
-  check_tile_collisions_x(&obj, world);
+void DynamicObject::update(MoveDirection dir, World *world, double dt) {
+  horizontal_movement(dir, dt);
+  check_tile_collisions_x(world);
 
-  vertical_movement(obj.position, dir, dt);
-  check_tile_collisions_y(&obj, world);
+  vertical_movement(dir, dt);
+  check_tile_collisions_y(world);
 }
 
-void Dynamic::draw(Object &obj, Screen *screen, AnimatedTexture *texture) {
+void DynamicObject::draw(Screen *screen) {
   texture->change_orientation(orientation);
-  texture->draw(screen, obj.position.x, obj.position.y);
+  texture->draw(screen, rect_obj.pos.x, rect_obj.pos.y);
 }
 
-Player::Player(Vector2 pos, int w, int h)
-    : dynamic(Dynamic()), obj(Object(pos, w, h)), on_ladder(false),
+Player::Player(Vector2 pos, AnimatedTexture *texture)
+    : dynamic_obj(pos, PLAYER_WIDTH, PLAYER_HEIGHT, texture), on_ladder(false),
       move_direction(DIR_NONE) {}
 
 void Player::player_vertical_movement(double dt) {
   if (on_ladder) {
     switch (move_direction) {
     case DIR_UP:
-      dynamic.velocity.y = -CLIMB_VELOCITY;
+      dynamic_obj.velocity.y = -CLIMB_VELOCITY;
       break;
     case DIR_DOWN:
-      dynamic.velocity.y = CLIMB_VELOCITY;
+      dynamic_obj.velocity.y = CLIMB_VELOCITY;
       break;
     default:
-      dynamic.velocity.y = 0;
+      dynamic_obj.velocity.y = 0;
       break;
     }
   }
 
-  dynamic.vertical_movement(obj.position, move_direction, dt);
+  dynamic_obj.vertical_movement(move_direction, dt);
 }
 
-Barrel::Barrel(Vector2 pos, int w, int h, MoveDirection dir)
-    : dynamic(Dynamic()), obj(Object(pos, w, h)), move_direction(dir) {}
+Barrel::Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture)
+    : dynamic_obj(pos, BARREL_WIDTH, BARREL_HEIGHT, texture),
+      move_direction(dir) {}
 
-Barrel::Barrel(Vector2 pos, MoveDirection dir)
-    : Barrel(pos, BARREL_WIDTH, BARREL_HEIGHT, dir){};
+Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE, NULL){};
 
-Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE){};
+/* Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT,
+ * NULL){}; */
 
-Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT){};
+RectObject &Barrel::get_rect() { return dynamic_obj.rect_obj; }
 
 void Barrel::update(World *world, double dt) {
-  bool was_on_ground = dynamic.on_ground;
-  double fall_dist = dynamic.fall_dist;
+  bool was_on_ground = dynamic_obj.on_ground;
+  double fall_dist = dynamic_obj.fall_dist;
 
-  dynamic.update(obj, move_direction, world, dt);
+  dynamic_obj.update(move_direction, world, dt);
 
-  if (dynamic.on_ground && !was_on_ground && fall_dist > 1 + CLIMB_THRESHOLD) {
+  if (dynamic_obj.on_ground && !was_on_ground &&
+      fall_dist > 1 + CLIMB_THRESHOLD) {
     move_direction = opposite_direction(move_direction);
   }
 }
 
 /* void Barrel::draw(Screen &screen) { obj.draw(&screen); } */
 
+RectObject &Player::get_rect() { return dynamic_obj.rect_obj; }
+
 void Player::update(World *world, double dt) {
-  dynamic.horizontal_movement(obj.position, move_direction, dt);
+  dynamic_obj.horizontal_movement(move_direction, dt);
   if (!on_ladder)
-    dynamic.check_tile_collisions_x(&obj, world);
+    dynamic_obj.check_tile_collisions_x(world);
 
   if (move_direction == DIR_UP && !on_ladder) {
-    Ladder *ladder = world->intersecting_ladder(&obj);
+    Ladder *ladder = world->intersecting_ladder(&dynamic_obj);
     if (ladder != NULL) {
       get_on_ladder(ladder);
     }
@@ -240,41 +255,44 @@ void Player::update(World *world, double dt) {
 
   player_vertical_movement(dt);
 
-  if (on_ladder && world->intersecting_ladder(&obj) == NULL) {
+  if (on_ladder && world->intersecting_ladder(&dynamic_obj) == NULL) {
     get_off_ladder();
   }
 
   if (!on_ladder || move_direction == DIR_DOWN) {
-    dynamic.check_tile_collisions_y(&obj, world);
+    dynamic_obj.check_tile_collisions_y(world);
     // get off ladder early if there is ground above it
-    if (on_ladder && dynamic.on_ground)
+    if (on_ladder && dynamic_obj.on_ground)
       get_off_ladder();
   }
 }
 
 void Player::get_on_ladder(Ladder *ladder) {
   on_ladder = true;
-  obj.position.x = ladder->obj.center_x() - obj.width / 2.;
-  dynamic.velocity.y = 0;
-  dynamic.acceleration.y = 0;
+  get_rect().pos.x = ladder->get_rect()->center_x() - get_rect().width / 2.;
+  dynamic_obj.velocity.y = 0;
+  dynamic_obj.acceleration.y = 0;
   move_direction = DIR_NONE;
 }
 
 void Player::get_off_ladder() {
   on_ladder = false;
-  dynamic.acceleration.y = GRAVITY;
+  dynamic_obj.acceleration.y = GRAVITY;
   if (move_direction == DIR_UP)
-    dynamic.velocity.y = -JUMP_VELOCITY / 4;
+    dynamic_obj.velocity.y = -JUMP_VELOCITY / 4;
   else
-    dynamic.velocity.y = 0;
+    dynamic_obj.velocity.y = 0;
   move_direction = DIR_NONE;
 }
 
-void Player::draw(Screen &screen, AnimatedTexture *texture) {
+void Player::draw(Screen &screen) {
   if (on_ladder) {
-    texture->change_state(1);
+    dynamic_obj.texture->change_state(1);
+  } else {
+    if (dynamic_obj.texture->curr_state == 1)
+      dynamic_obj.texture->change_state(0);
   }
-  dynamic.draw(obj, &screen, texture);
+  dynamic_obj.draw(&screen);
 }
 
 void Player::move(MoveDirection dir, bool key_down) {
@@ -292,10 +310,10 @@ void Player::move(MoveDirection dir, bool key_down) {
 }
 
 void Player::jump() {
-  if (!dynamic.coyote_on_ground)
+  if (!dynamic_obj.coyote_on_ground)
     return;
 
-  dynamic.on_ground = false;
-  dynamic.coyote_on_ground = false;
-  dynamic.velocity.y = -JUMP_VELOCITY;
+  dynamic_obj.on_ground = false;
+  dynamic_obj.coyote_on_ground = false;
+  dynamic_obj.velocity.y = -JUMP_VELOCITY;
 }

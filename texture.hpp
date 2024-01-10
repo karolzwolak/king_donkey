@@ -46,6 +46,8 @@ public:
   int frame_width, frame_height;
 
   AnimatedTexture(int frame_width, int frame_height);
+  AnimatedTexture(AnimatedTexture &other);
+
   ~AnimatedTexture();
   void add_animation(int state_val, AnimationFrames frames);
 

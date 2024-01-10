@@ -27,6 +27,6 @@ public:
   World(int w, int h);
 
   void update(double dt);
-  Ladder *intersecting_ladder(Object *obj);
+  Ladder *intersecting_ladder(DynamicObject *obj);
   void draw(Screen &screen);
 };

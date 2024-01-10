@@ -14,14 +14,14 @@ const float JUMP_VELOCITY = 300;
 
 const float CLIMB_VELOCITY = 50;
 
-const int TILE_WIDTH = 32;
-const int TILE_HEIGHT = 16;
+const int TILE_WIDTH = 16;
+const int TILE_HEIGHT = 8;
 
 const int PLAYER_WIDTH = 16;
-const int PLAYER_HEIGHT = 32;
+const int PLAYER_HEIGHT = 16;
 
-const int BARREL_WIDTH = 16;
-const int BARREL_HEIGHT = 16;
+const int BARREL_WIDTH = 8;
+const int BARREL_HEIGHT = 8;
 
 const int CLIMB_THRESHOLD = 0.25 * TILE_HEIGHT;
 const int COYOTE_DIST = CLIMB_THRESHOLD + 0.1;
@@ -44,13 +44,13 @@ enum MoveDirection {
 
 MoveDirection opposite_direction(MoveDirection dir);
 
-class Object {
+class RectObject {
 public:
   /// Position is the left top corner
-  Vector2 position;
+  Vector2 pos;
   int width, height;
 
-  Object(Vector2 pos, int w, int h);
+  RectObject(Vector2 pos, int w, int h);
 
   double top();
   double bottom();
@@ -60,85 +60,105 @@ public:
   double center_x();
   double center_y();
 
-  void draw_simple(Screen *screen, SimpleTexture *texture);
-  void draw_animated(Screen *screen, AnimatedTexture *texture);
-  bool collides_with(Object *obj);
+  /* void draw_simple(Screen *screen, SimpleTexture *texture); */
+  /* void draw_animated(Screen *screen, AnimatedTexture *texture); */
+  bool collides_with(RectObject *obj);
 };
 
-class Dynamic {
+class StaticObject {
 public:
+  RectObject obj;
+  SimpleTexture *texture;
+
+  StaticObject(Vector2 pos, int w, int h, SimpleTexture *texture);
+  /* ~StaticObject(); */
+  void draw(Screen *screen);
+};
+
+class DynamicObject {
+public:
+  RectObject rect_obj;
   Vector2 velocity, acceleration;
   double fall_dist;
   bool on_ground;
   bool coyote_on_ground;
   Orientation orientation;
+  AnimatedTexture *texture;
 
   void limit_velocity();
 
 public:
-  Dynamic();
+  DynamicObject(Vector2 pos, int w, int h, AnimatedTexture *texture);
+  /* ~DynamicObject(); */
 
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
 
-  bool check_tile_collisions_x(Object *obj, World *world);
-  bool check_tile_collisions_y(Object *obj, World *world);
+  bool check_tile_collisions_x(World *world);
+  bool check_tile_collisions_y(World *world);
 
-  void horizontal_movement(Vector2 &pos, MoveDirection dir, double dt);
-  void vertical_movement(Vector2 &pos, MoveDirection dir, double dt);
+  void horizontal_movement(MoveDirection dir, double dt);
+  void vertical_movement(MoveDirection dir, double dt);
 
-  void update(Object &obj, MoveDirection dir, World *world, double dt);
-  void draw(Object &obj, Screen *screen, AnimatedTexture *texture);
+  void update(MoveDirection dir, World *world, double dt);
+  void draw(Screen *screen);
 };
 
 class Ladder {
 
 public:
-  Object obj;
+  StaticObject static_obj;
 
   Ladder();
-  Ladder(Vector2 pos, int w, int h);
+  Ladder(Vector2 pos, int w, int h, SimpleTexture *texture);
+  /* ~Ladder(); */
+
+  RectObject *get_rect();
   void draw(Screen &screen);
 };
 
 class Tile {
 
 public:
-  Object obj;
+  StaticObject static_obj;
 
+  Tile(Vector2 pos, SimpleTexture *texture);
   Tile();
-  Tile(Vector2 pos);
-  void draw(Screen &screen, SimpleTexture *texture);
+  /* ~Tile(); */
+
+  RectObject *get_rect();
+  void draw(Screen &screen);
 };
 
 class Barrel {
 
 public:
-  Dynamic dynamic;
-  Object obj;
+  DynamicObject dynamic_obj;
   MoveDirection move_direction;
 
-  Barrel(Vector2 pos, int w, int h, MoveDirection dir);
-  Barrel(Vector2 pos, MoveDirection dir);
+  Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture);
   Barrel();
 
+  RectObject &get_rect();
+
   void update(World *world, double dt);
-  void draw(Screen &screen, AnimatedTexture *texture);
+  void draw(Screen &screen);
 };
 
 class Player {
-  Object obj;
   MoveDirection move_direction;
   bool on_ladder;
   /* PlayerState state; */
 public:
-  Dynamic dynamic;
-  Player(Vector2 pos, int w, int h);
-
-  Player(Vector2 pos);
+  DynamicObject dynamic_obj;
+  Player(Vector2 pos, AnimatedTexture *texture);
+  /* ~Player(); */
+  /* Player(Vector2 pos); */
 
   void update(World *world, double dt);
-  void draw(Screen &screen, AnimatedTexture *texture);
+  void draw(Screen &screen);
+
+  RectObject &get_rect();
 
   bool check_on_ladder(World *world);
 
