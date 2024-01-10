@@ -7,9 +7,10 @@
 class Game {
   Screen screen;
   World world;
+  TextureManager textures;
 
 public:
-  Game(int w, int h) : screen(w, h), world(w, h) {}
+  Game(int w, int h) : screen(w, h), textures(), world(w, h, textures) {}
 
   void clear() { screen.clear(); }
   void update(double dt) { world.update(dt); }

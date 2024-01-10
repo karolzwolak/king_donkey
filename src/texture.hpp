@@ -73,6 +73,12 @@ public:
   void draw(Screen *screen, int x, int y);
 };
 
-class TextureAtlas {
-  SDL_Surface atlas;
+class TextureManager {
+public:
+  AnimatedTexture player_texture;
+  AnimatedTexture barrel_texture;
+  SimpleTexture tile_texture;
+  SimpleTexture ladder_texture;
+
+  TextureManager();
 };

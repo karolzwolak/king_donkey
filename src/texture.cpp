@@ -1,4 +1,5 @@
 #include "texture.hpp"
+#include "objects.hpp"
 #include <cassert>
 
 AnimationFrames::AnimationFrames(int atlas_x, int atlas_y, int frame_count,
@@ -106,3 +107,9 @@ void AnimatedTexture::change_orientation(Orientation orientation) {
 SimpleTexture::SimpleTexture(int atlas_x, int atlas_y, int width, int height)
     : atlas_x(atlas_x), atlas_y(atlas_y), width(width), height(height),
       rect({atlas_x, atlas_y, width, height}) {}
+
+TextureManager::TextureManager()
+    : player_texture(Player::create_texture()),
+      barrel_texture(Barrel::create_texture()),
+      tile_texture(Tile::create_texture()),
+      ladder_texture(Ladder::create_texture()) {}

@@ -114,7 +114,7 @@ public:
 
   Ladder();
   Ladder(Vector2 pos, int parts, SimpleTexture *texture);
-  static SimpleTexture *create_texture();
+  static SimpleTexture create_texture();
 
   RectObject *get_rect();
   void draw(Screen &screen);
@@ -128,7 +128,7 @@ public:
   Tile(Vector2 pos, SimpleTexture *texture);
   Tile();
 
-  static SimpleTexture *create_texture();
+  static SimpleTexture create_texture();
   RectObject *get_rect();
   void draw(Screen &screen);
 };
@@ -142,7 +142,7 @@ public:
   Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture);
   Barrel();
 
-  static AnimatedTexture *create_texture();
+  static AnimatedTexture create_texture();
 
   RectObject &get_rect();
 
@@ -159,7 +159,7 @@ public:
   DynamicObject dynamic_obj;
   Player(Vector2 pos, AnimatedTexture *texture);
 
-  static AnimatedTexture *create_texture();
+  static AnimatedTexture create_texture();
 
   void update(World *world, double dt);
   void draw(Screen &screen);

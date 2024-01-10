@@ -47,8 +47,8 @@ Ladder::Ladder(Vector2 pos, int parts, SimpleTexture *texture)
 
 Ladder::Ladder() : Ladder(Vector2(0, 0), 0, NULL) {}
 
-SimpleTexture *Ladder::create_texture() {
-  SimpleTexture *texture = new SimpleTexture(50, 35, 8, 8);
+SimpleTexture Ladder::create_texture() {
+  SimpleTexture texture = SimpleTexture(50, 35, 8, 8);
   return texture;
 }
 
@@ -76,9 +76,7 @@ Tile::Tile(Vector2 pos, SimpleTexture *texture)
 
 Tile::Tile() : Tile(Vector2(0, 0), NULL) {}
 
-SimpleTexture *Tile::create_texture() {
-  return new SimpleTexture(60, 35, 16, 8);
-}
+SimpleTexture Tile::create_texture() { return SimpleTexture(60, 35, 16, 8); }
 
 RectObject *Tile::get_rect() { return &static_obj.obj; }
 
@@ -215,8 +213,8 @@ Player::Player(Vector2 pos, AnimatedTexture *texture)
     : dynamic_obj(pos, PLAYER_WIDTH, PLAYER_HEIGHT, texture), on_ladder(false),
       move_direction(DIR_NONE) {}
 
-AnimatedTexture *Player::create_texture() {
-  AnimatedTexture *texture = new AnimatedTexture(16, 16);
+AnimatedTexture Player::create_texture() {
+  AnimatedTexture texture = AnimatedTexture(16, 16);
 
   AnimationFrames idle_frames = AnimationFrames(0, 17, 1, 0, 0, OR_RIGHT);
   AnimationFrames run_frames = AnimationFrames(0, 17, 3, 0.15, 0, OR_RIGHT);
@@ -226,11 +224,11 @@ AnimatedTexture *Player::create_texture() {
   AnimationFrames jump_frames = AnimationFrames(0, 0, 6, 0.1, 5);
   AnimationFrames fall_frames = AnimationFrames(80, 0, 1, 0, 0);
 
-  texture->add_animation(IDLE, idle_frames);
-  texture->add_animation(WALKING, run_frames);
-  texture->add_animation(CLIMBING, climb_frames);
-  texture->add_animation(JUMPING, jump_frames);
-  texture->add_animation(FALLING, fall_frames);
+  texture.add_animation(IDLE, idle_frames);
+  texture.add_animation(WALKING, run_frames);
+  texture.add_animation(CLIMBING, climb_frames);
+  texture.add_animation(JUMPING, jump_frames);
+  texture.add_animation(FALLING, fall_frames);
 
   return texture;
 }
@@ -270,10 +268,10 @@ Barrel::Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture)
 
 Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE, NULL){};
 
-AnimatedTexture *Barrel::create_texture() {
-  AnimatedTexture *texture = new AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
+AnimatedTexture Barrel::create_texture() {
+  AnimatedTexture texture = AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
   AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.15, 0, OR_NONE);
-  texture->add_animation(WALKING, walk_frames);
+  texture.add_animation(WALKING, walk_frames);
   return texture;
 }
 

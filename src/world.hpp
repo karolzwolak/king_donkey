@@ -10,11 +10,6 @@ class World {
 public:
   Player player;
 
-  AnimatedTexture *player_texture;
-  AnimatedTexture *barrel_texture;
-  SimpleTexture *tile_texture;
-  SimpleTexture *ladder_texture;
-
   Ladder *ladders;
   int ladder_count;
 
@@ -24,7 +19,7 @@ public:
   Barrel *barrels;
   int barrel_count;
 
-  World(int w, int h);
+  World(int w, int h, TextureManager &textures);
   ~World();
 
   void update(double dt);
