@@ -23,8 +23,8 @@ const int LADDER_HEIGHT = 8;
 const int PLAYER_WIDTH = 16;
 const int PLAYER_HEIGHT = 16;
 
-const int BARREL_WIDTH = 8;
-const int BARREL_HEIGHT = 8;
+const int BARREL_WIDTH = 12;
+const int BARREL_HEIGHT = 12;
 
 const int CLIMB_THRESHOLD = 0.25 * TILE_HEIGHT;
 const int COYOTE_DIST = CLIMB_THRESHOLD + 0.1;
@@ -144,6 +144,8 @@ public:
 
   Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture);
   Barrel();
+
+  static AnimatedTexture *create_texture();
 
   RectObject &get_rect();
 

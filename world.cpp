@@ -13,6 +13,7 @@ World::World(int w, int h)
 
   ladder_texture = Ladder::create_texture();
   tile_texture = Tile::create_texture();
+  barrel_texture = Barrel::create_texture();
 
   tiles = new Tile[100];
   tile_count = 0;
@@ -34,7 +35,7 @@ World::World(int w, int h)
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 10, ladder_texture);
   tiles[tile_count++] = Tile(Vector2(100, 100), tile_texture);
 
-  /* barrels[barrel_count++] = Barrel(Vector2(100, 80), DIR_LEFT); */
+  barrels[barrel_count++] = Barrel(Vector2(100, 80), DIR_LEFT, barrel_texture);
 }
 
 Ladder *World::intersecting_ladder(DynamicObject *obj) {
@@ -48,8 +49,6 @@ Ladder *World::intersecting_ladder(DynamicObject *obj) {
 
 void World::update(double dt) {
   player.update(this, dt);
-  player_texture->update(dt, player.dynamic_obj.velocity.x == 0 &&
-                                 player.dynamic_obj.velocity.y == 0);
 
   for (int i = 0; i < barrel_count; i++) {
     barrels[i].update(this, dt);
@@ -64,8 +63,8 @@ void World::draw(Screen &screen) {
     ladders[i].draw(screen);
   }
 
-  /* for (int i = 0; i < barrel_count; i++) { */
-  /*   barrels[i].draw(screen); */
-  /* } */
+  for (int i = 0; i < barrel_count; i++) {
+    barrels[i].draw(screen);
+  }
   player.draw(screen);
 }

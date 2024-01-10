@@ -199,6 +199,7 @@ void DynamicObject::vertical_movement(MoveDirection dir, double dt) {
 }
 
 void DynamicObject::update(MoveDirection dir, World *world, double dt) {
+  texture->update(dt, velocity.x == 0 && velocity.y == 0);
   horizontal_movement(dir, dt);
   check_tile_collisions_x(world);
 
@@ -270,6 +271,13 @@ Barrel::Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture)
 
 Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE, NULL){};
 
+AnimatedTexture *Barrel::create_texture() {
+  AnimatedTexture *texture = new AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
+  AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.15, 0, OR_NONE);
+  texture->add_animation(WALKING, walk_frames);
+  return texture;
+}
+
 /* Player::Player(Vector2 pos) : Player(pos, PLAYER_WIDTH, PLAYER_HEIGHT,
  * NULL){}; */
 
@@ -287,7 +295,7 @@ void Barrel::update(World *world, double dt) {
   }
 }
 
-/* void Barrel::draw(Screen &screen) { obj.draw(&screen); } */
+void Barrel::draw(Screen &screen) { dynamic_obj.draw(&screen); }
 
 RectObject &Player::get_rect() { return dynamic_obj.rect_obj; }
 
