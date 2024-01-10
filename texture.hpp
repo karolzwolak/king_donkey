@@ -1,26 +1,34 @@
 #pragma once
 
 #include "./SDL2-2.0.10/include/SDL.h"
+#include "screen.hpp"
 
 #define ATLAS_PADDING 1
 #define FRAME_PADDING 0
+#define DEFAULT_ORIENTATION OR_LEFT
+
+enum Orientation { OR_LEFT, OR_RIGHT, OR_NONE };
 
 class AnimationFrames {
 public:
-  constexpr static const double TIME_PER_FRAME = 0.15;
-
   int atlas_x, atlas_y;
   int frame_count;
   int repeat_from_frame;
   int curr_frame;
+
+  Orientation frame_orientation;
+  Orientation curr_orientation;
+  double time_per_frame;
   double timer;
 
   AnimationFrames();
   AnimationFrames(int atlas_x, int atlas_y, int frame_count,
-                  int repeat_from_frame);
+                  double time_per_frame, int repeat_from_frame,
+                  Orientation frame_orientation = DEFAULT_ORIENTATION);
 
   void update(double delta);
   void reset();
+  bool needs_flipping();
 };
 
 class AnimatedTexture {
@@ -43,8 +51,11 @@ public:
 
   void change_state(int state_val);
   void update(double delta);
+  void change_orientation(Orientation orientation);
 
   SDL_Rect *get_curr_frame();
+  void draw(Screen *screen, int x, int y);
+  bool needs_flipping();
 };
 
 class SimpleTexture {
@@ -54,6 +65,7 @@ public:
   SDL_Rect rect;
 
   SimpleTexture(int atlas_x, int atlas_y, int width, int height);
+  void draw(Screen *screen, int x, int y);
 };
 
 class TextureAtlas {

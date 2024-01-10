@@ -28,16 +28,16 @@ public:
     case SDLK_ESCAPE:
       return true;
     case SDLK_LEFT:
-      world.player.move(LEFT, true);
+      world.player.move(DIR_LEFT, true);
       break;
     case SDLK_RIGHT:
-      world.player.move(RIGHT, true);
+      world.player.move(DIR_RIGHT, true);
       break;
     case SDLK_UP:
-      world.player.move(UP, true);
+      world.player.move(DIR_UP, true);
       break;
     case SDLK_DOWN:
-      world.player.move(DOWN, true);
+      world.player.move(DIR_DOWN, true);
       break;
     case SDLK_SPACE:
       world.player.jump();
@@ -51,16 +51,16 @@ public:
     case SDLK_ESCAPE:
       return true;
     case SDLK_LEFT:
-      world.player.move(LEFT, false);
+      world.player.move(DIR_LEFT, false);
       break;
     case SDLK_RIGHT:
-      world.player.move(RIGHT, false);
+      world.player.move(DIR_RIGHT, false);
       break;
     case SDLK_UP:
-      world.player.move(UP, false);
+      world.player.move(DIR_UP, false);
       break;
     case SDLK_DOWN:
-      world.player.move(DOWN, false);
+      world.player.move(DIR_DOWN, false);
       break;
     };
     return false;

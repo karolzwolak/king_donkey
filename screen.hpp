@@ -33,7 +33,7 @@ public:
   // charset is a 128x128 bitmap containing character images
   void draw_string(int x, int y, const char *text, SDL_Surface *charset);
 
-  void draw_atlas_texture(SDL_Rect *sprite, int x, int y);
+  void draw_atlas_texture(SDL_Rect *sprite, int x, int y, bool flip = false);
 
   // draw a surface sprite on a surface screen in point (x, y)
   // (x, y) is the left top corner

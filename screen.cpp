@@ -28,12 +28,17 @@ void Screen::draw_string(int x, int y, const char *text, SDL_Surface *charset) {
   };
 };
 
-void Screen::draw_atlas_texture(SDL_Rect *sprite, int x, int y) {
+void Screen::draw_atlas_texture(SDL_Rect *sprite, int x, int y, bool flip) {
   SDL_Rect dest;
   dest.x = x;
   dest.y = y;
   dest.w = sprite->w;
   dest.h = sprite->h;
+  if (flip) {
+    SDL_RenderCopyEx(renderer, atlas, sprite, &dest, 0, NULL,
+                     SDL_FLIP_HORIZONTAL);
+    return;
+  }
   SDL_RenderCopy(renderer, atlas, sprite, &dest);
   /* SDL_BlitSurface(atlas, sprite, screen, &dest); */
 }

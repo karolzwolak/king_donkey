@@ -35,11 +35,11 @@ enum PlayerState {
 };
 
 enum MoveDirection {
-  LEFT,
-  RIGHT,
-  UP,
-  DOWN,
-  NONE,
+  DIR_LEFT,
+  DIR_RIGHT,
+  DIR_UP,
+  DIR_DOWN,
+  DIR_NONE,
 };
 
 MoveDirection opposite_direction(MoveDirection dir);
@@ -71,6 +71,7 @@ public:
   double fall_dist;
   bool on_ground;
   bool coyote_on_ground;
+  Orientation orientation;
 
   void limit_velocity();
 
@@ -87,6 +88,7 @@ public:
   void vertical_movement(Vector2 &pos, MoveDirection dir, double dt);
 
   void update(Object &obj, MoveDirection dir, World *world, double dt);
+  void draw(Object &obj, Screen *screen, AnimatedTexture *texture);
 };
 
 class Ladder {

@@ -2,15 +2,18 @@
 #include <cassert>
 
 AnimationFrames::AnimationFrames(int atlas_x, int atlas_y, int frame_count,
-                                 int repeat_from_frame)
+                                 double time_per_frame, int repeat_from_frame,
+                                 Orientation frame_orientation)
     : atlas_x(atlas_x), atlas_y(atlas_y), frame_count(frame_count),
-      repeat_from_frame(repeat_from_frame), curr_frame(0), timer(0){};
+      repeat_from_frame(repeat_from_frame), curr_frame(0), timer(0),
+      time_per_frame(time_per_frame), frame_orientation(frame_orientation),
+      curr_orientation(OR_NONE){};
 
 AnimationFrames::AnimationFrames() : atlas_x(0), atlas_y(0), frame_count(0){};
 
 void AnimationFrames::update(double delta) {
   timer += delta;
-  if (timer > TIME_PER_FRAME) {
+  if (timer > time_per_frame) {
     timer = 0;
     curr_frame++;
     if (curr_frame >= frame_count) {
@@ -22,6 +25,10 @@ void AnimationFrames::update(double delta) {
 void AnimationFrames::reset() {
   curr_frame = 0;
   timer = 0;
+}
+
+bool AnimationFrames::needs_flipping() {
+  return curr_orientation != OR_NONE && curr_orientation != frame_orientation;
 }
 
 AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
@@ -60,18 +67,27 @@ void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
   }
 }
 
+bool AnimatedTexture::needs_flipping() {
+  return curr_animation->needs_flipping();
+}
+
 SDL_Rect *AnimatedTexture::get_curr_frame() {
   assert(curr_animation != NULL);
   int frame_id = curr_animation->curr_frame;
-  printf("dframe_id: %d\n", frame_id);
-  printf("frame_width: %d\n", frame_width);
-  printf("frame_height: %d\n", frame_height);
   rect.x = curr_animation->atlas_x + frame_id * (frame_width + FRAME_PADDING);
   rect.y = curr_animation->atlas_y;
 
   return &rect;
 }
 
+void AnimatedTexture::draw(Screen *screen, int x, int y) {
+  screen->draw_atlas_texture(get_curr_frame(), x, y, needs_flipping());
+}
+
+void AnimatedTexture::change_orientation(Orientation orientation) {
+  curr_animation->curr_orientation = orientation;
+}
+
 SimpleTexture::SimpleTexture(int atlas_x, int atlas_y, int width, int height)
     : atlas_x(atlas_x), atlas_y(atlas_y), width(width), height(height),
-      rect({0, 0, width, height}) {}
+      rect({atlas_x, atlas_y, width, height}) {}
