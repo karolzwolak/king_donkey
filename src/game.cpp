@@ -1,6 +1,7 @@
 #include "objects.cpp"
 #include "primitives.cpp"
 #include "screen.cpp"
+#include "screen.hpp"
 #include "texture.cpp"
 #include "world.cpp"
 
@@ -11,8 +12,8 @@ class Game {
 
 public:
   Game(int w, int h)
-      : screen(w, h), textures(), world(SCREEN_WIDTH, SCREEN_HEIGHT, textures) {
-  }
+      : screen(w, h), textures(),
+        world(LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT, textures) {}
 
   void clear() { screen.clear(); }
   void update(double dt) { world.update(dt); }

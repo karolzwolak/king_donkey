@@ -9,8 +9,8 @@ extern "C" {
 #include "../SDL2-2.0.10/include/SDL_render.h"
 }
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 360
+#define LOGICAL_SCREEN_WIDTH 640
+#define LOGICAL_SCREEN_HEIGHT 360
 
 #define TARGET_FPS 120
 #define WINDOW_TITLE "King Donkey game"

@@ -152,17 +152,19 @@ Screen::Screen(int w, int h) {
   SDL_GetWindowSize(window, &width, &height);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_RenderSetLogicalSize(renderer, LOGICAL_SCREEN_WIDTH,
+                           LOGICAL_SCREEN_HEIGHT);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
   SDL_SetWindowTitle(window, WINDOW_TITLE);
 
-  screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, 0x00FF0000,
-                                0x0000FF00, 0x000000FF, 0xFF000000);
+  screen =
+      SDL_CreateRGBSurface(0, LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT, 32,
+                           0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
   scrtex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-                             SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH,
-                             SCREEN_HEIGHT);
+                             SDL_TEXTUREACCESS_STREAMING, LOGICAL_SCREEN_WIDTH,
+                             LOGICAL_SCREEN_HEIGHT);
 
   SDL_Surface *surface = SDL_LoadBMP("assets/atlas.bmp");
   atlas = SDL_CreateTextureFromSurface(renderer, surface);
