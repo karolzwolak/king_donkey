@@ -8,10 +8,12 @@ class World;
 
 const float GRAVITY = 500;
 const float MAX_VELOCITY = 5000;
-const float MOVE_VELOCITY = 150;
-const float JUMP_VELOCITY = 300;
 
-const float CLIMB_VELOCITY = 50;
+const float PLAYER_MOVE_VEL = 100;
+const float BARREL_MOVE_VEL = 1.25 * PLAYER_MOVE_VEL;
+const float JUMP_VELOCITY = 200;
+
+const float CLIMB_VELOCITY = 35;
 
 const int TILE_WIDTH = 16;
 const int TILE_HEIGHT = 8;
@@ -81,6 +83,7 @@ class DynamicObject {
 public:
   RectObject rect_obj;
   Vector2 velocity, acceleration;
+  double horizontal_move_vel;
   double fall_dist;
   bool on_ground;
   bool coyote_on_ground;
@@ -90,15 +93,16 @@ public:
   void limit_velocity();
 
 public:
-  DynamicObject(Vector2 pos, int w, int h, AnimatedTexture *texture);
+  DynamicObject(Vector2 pos, int w, int h, double horizontal_move_vel,
+                AnimatedTexture *texture);
 
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
 
-  void check_tile_collisions_x(World *world);
-  void check_out_of_bounds_x(World *world);
-  void check_tile_collisions_y(World *world);
-  void check_out_of_bounds_y(World *world);
+  bool check_tile_collisions_x(World *world);
+  bool check_out_of_bounds_x(World *world);
+  bool check_tile_collisions_y(World *world);
+  bool check_out_of_bounds_y(World *world);
 
   void horizontal_movement(MoveDirection dir, double dt);
   void vertical_movement(MoveDirection dir, double dt);
