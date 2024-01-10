@@ -148,12 +148,15 @@ public:
 class Player {
   MoveDirection move_direction;
   bool on_ladder;
-  /* PlayerState state; */
+  PlayerState state;
+
 public:
   DynamicObject dynamic_obj;
   Player(Vector2 pos, AnimatedTexture *texture);
   /* ~Player(); */
   /* Player(Vector2 pos); */
+
+  static AnimatedTexture *create_texture();
 
   void update(World *world, double dt);
   void draw(Screen &screen);

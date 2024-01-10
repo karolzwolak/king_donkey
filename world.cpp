@@ -8,14 +8,7 @@ World::World(int w, int h)
       barrel_texture(NULL), tile_texture(NULL), ladder_texture(NULL),
       barrels(NULL), barrel_count(0) {
 
-  player_texture = new AnimatedTexture(16, 16);
-  AnimationFrames player_run_frames =
-      AnimationFrames(0, 17, 3, 0.1, 0, OR_RIGHT);
-  AnimationFrames player_climb_frames =
-      AnimationFrames(49, 17, 2, 0.15, 0, OR_NONE, false);
-  player_texture->add_animation(0, player_run_frames);
-  player_texture->add_animation(1, player_climb_frames);
-
+  player_texture = Player::create_texture();
   player = Player(Vector2(0, 0), player_texture);
 
   tile_texture = new SimpleTexture(60, 35, 16, 8);

@@ -196,6 +196,26 @@ Player::Player(Vector2 pos, AnimatedTexture *texture)
     : dynamic_obj(pos, PLAYER_WIDTH, PLAYER_HEIGHT, texture), on_ladder(false),
       move_direction(DIR_NONE) {}
 
+AnimatedTexture *Player::create_texture() {
+  AnimatedTexture *texture = new AnimatedTexture(16, 16);
+
+  AnimationFrames idle_frames = AnimationFrames(0, 17, 1, 0, 0, OR_RIGHT);
+  AnimationFrames run_frames = AnimationFrames(0, 17, 3, 0.15, 0, OR_RIGHT);
+  AnimationFrames climb_frames =
+      AnimationFrames(49, 17, 2, 0.15, 0, OR_NONE, false);
+
+  AnimationFrames jump_frames = AnimationFrames(0, 0, 6, 0.1, 5);
+  AnimationFrames fall_frames = AnimationFrames(80, 0, 1, 0, 0);
+
+  texture->add_animation(IDLE, idle_frames);
+  texture->add_animation(WALKING, run_frames);
+  texture->add_animation(CLIMBING, climb_frames);
+  texture->add_animation(JUMPING, jump_frames);
+  texture->add_animation(FALLING, fall_frames);
+
+  return texture;
+}
+
 void Player::player_vertical_movement(double dt) {
   if (on_ladder) {
     switch (move_direction) {
@@ -209,6 +229,16 @@ void Player::player_vertical_movement(double dt) {
       dynamic_obj.velocity.y = 0;
       break;
     }
+  }
+
+  if (dynamic_obj.coyote_on_ground) {
+    if (dynamic_obj.velocity.x == 0) {
+      state = IDLE;
+    } else {
+      state = WALKING;
+    }
+  } else if (dynamic_obj.velocity.y > 0) {
+    state = FALLING;
   }
 
   dynamic_obj.vertical_movement(move_direction, dt);
@@ -269,6 +299,8 @@ void Player::update(World *world, double dt) {
 
 void Player::get_on_ladder(Ladder *ladder) {
   on_ladder = true;
+  state = CLIMBING;
+
   get_rect().pos.x = ladder->get_rect()->center_x() - get_rect().width / 2.;
   dynamic_obj.velocity.y = 0;
   dynamic_obj.acceleration.y = 0;
@@ -276,6 +308,8 @@ void Player::get_on_ladder(Ladder *ladder) {
 }
 
 void Player::get_off_ladder() {
+  state = WALKING;
+
   on_ladder = false;
   dynamic_obj.acceleration.y = GRAVITY;
   if (move_direction == DIR_UP)
@@ -286,12 +320,8 @@ void Player::get_off_ladder() {
 }
 
 void Player::draw(Screen &screen) {
-  if (on_ladder) {
-    dynamic_obj.texture->change_state(1);
-  } else {
-    if (dynamic_obj.texture->curr_state == 1)
-      dynamic_obj.texture->change_state(0);
-  }
+  printf("state: %d\n", state);
+  dynamic_obj.texture->change_state(state);
   dynamic_obj.draw(&screen);
 }
 
@@ -312,6 +342,8 @@ void Player::move(MoveDirection dir, bool key_down) {
 void Player::jump() {
   if (!dynamic_obj.coyote_on_ground)
     return;
+
+  state = JUMPING;
 
   dynamic_obj.on_ground = false;
   dynamic_obj.coyote_on_ground = false;
