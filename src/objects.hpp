@@ -95,8 +95,10 @@ public:
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
 
-  bool check_tile_collisions_x(World *world);
-  bool check_tile_collisions_y(World *world);
+  void check_tile_collisions_x(World *world);
+  void check_out_of_bounds_x(World *world);
+  void check_tile_collisions_y(World *world);
+  void check_out_of_bounds_y(World *world);
 
   void horizontal_movement(MoveDirection dir, double dt);
   void vertical_movement(MoveDirection dir, double dt);

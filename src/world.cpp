@@ -36,7 +36,6 @@ World::World(int w, int h, TextureManager &textures)
     tiles[tile_count++] = Tile(Vector2(x, y), &textures.tile_texture);
     x += TILE_WIDTH;
   }
-  tiles[tile_count++] = Tile(Vector2(x, y - 16), &textures.tile_texture);
 
   ladders[ladder_count++] =
       Ladder(Vector2(100, 100), 10, &textures.ladder_texture);

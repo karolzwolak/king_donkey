@@ -98,7 +98,8 @@ void DynamicObject::set_velocity(Vector2 v) { velocity = v; }
 
 void DynamicObject::set_acceleration_x(float x) { acceleration.x = x; }
 
-bool DynamicObject::check_tile_collisions_x(World *world) {
+void DynamicObject::check_tile_collisions_x(World *world) {
+  check_out_of_bounds_x(world);
   for (int i = 0; i < world->tile_count; i++) {
     RectObject *tile_rect = world->tiles[i].get_rect();
     if (rect_obj.collides_with(tile_rect)) {
@@ -107,7 +108,7 @@ bool DynamicObject::check_tile_collisions_x(World *world) {
       if (velocity.y == 0 && elevation_dist > 0 &&
           elevation_dist <= CLIMB_THRESHOLD) {
         rect_obj.pos.y -= elevation_dist;
-        return true;
+        return;
       }
 
       bool collision_from_left = velocity.x > 0;
@@ -119,15 +120,14 @@ bool DynamicObject::check_tile_collisions_x(World *world) {
 
       velocity.x = 0;
 
-      return true;
+      return;
     }
   }
-
-  return false;
 }
 
-bool DynamicObject::check_tile_collisions_y(World *world) {
+void DynamicObject::check_tile_collisions_y(World *world) {
   on_ground = false;
+  check_out_of_bounds_y(world);
 
   for (int i = 0; i < world->tile_count; i++) {
 
@@ -146,14 +146,32 @@ bool DynamicObject::check_tile_collisions_y(World *world) {
 
       velocity.y = 0;
 
-      return true;
+      return;
     }
   }
 
   if (coyote_on_ground && fall_dist > COYOTE_DIST)
     coyote_on_ground = false;
+}
 
-  return false;
+void DynamicObject::check_out_of_bounds_x(World *world) {
+  if (rect_obj.left() < 0)
+    rect_obj.pos.x = 0;
+  else if (rect_obj.right() > world->width)
+    rect_obj.pos.x = world->width - rect_obj.width;
+}
+
+void DynamicObject::check_out_of_bounds_y(World *world) {
+  if (rect_obj.top() < 0)
+    rect_obj.pos.y = 0;
+  else if (rect_obj.bottom() > world->height) {
+
+    on_ground = true;
+    coyote_on_ground = true;
+    velocity.y = 0;
+
+    rect_obj.pos.y = world->height - rect_obj.height;
+  }
 }
 
 void DynamicObject::horizontal_movement(MoveDirection dir, double dt) {

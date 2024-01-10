@@ -5,9 +5,9 @@
 #include "texture.hpp"
 
 class World {
-  int width, height;
 
 public:
+  int width, height;
   Player player;
 
   Ladder *ladders;
