@@ -1,10 +1,6 @@
 #include "screen.hpp"
 #include "../SDL2-2.0.10/include/SDL_render.h"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-#define WINDOW_TITLE "King Donkey game"
-
 // draw a text txt on surface screen, starting from the point (x, y)
 // charset is a 128x128 bitmap containing character images
 void Screen::draw_string(int x, int y, const char *text, SDL_Surface *charset) {
@@ -92,10 +88,9 @@ void Screen::sleep(double ms) {
   SDL_Delay(ms);
 }
 
-void Screen::limit_fps() {
+void Screen::limit_fps(double fps_timer) {
   double expected_time = 1000.0 / target_fps;
-  double dt_ms = dt * 1000.0;
-  double delay = expected_time - dt_ms;
+  double delay = expected_time - fps_timer;
   sleep(delay);
 }
 
@@ -115,7 +110,7 @@ double Screen::tick() {
   };
   frames++;
 
-  limit_fps();
+  limit_fps(fps_timer);
 
   return dt;
 }
@@ -128,28 +123,29 @@ void Screen::render() {
 }
 
 Screen::Screen(int w, int h) {
-  width = w;
-  height = h;
   fps_timer = 0;
   fps = 0;
   target_fps = TARGET_FPS;
-
-  t1 = SDL_GetTicks();
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     printf("SDL_Init error: %s\n", SDL_GetError());
     throw "SDL_Init failed";
   }
 
-  // fullscreen mode
-  //	rc = SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP,
-  //	                                 &window, &renderer);
-  int rc = SDL_CreateWindowAndRenderer(w, h, 0, &window, &renderer);
+  int rc;
+  if (w * h == 0) {
+    rc = SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP,
+                                     &window, &renderer);
+  } else {
+    rc = SDL_CreateWindowAndRenderer(w, h, 0, &window, &renderer);
+  }
+
   if (rc != 0) {
     SDL_Quit();
     printf("SDL_CreateWindowAndRenderer error: %s\n", SDL_GetError());
     throw "SDL_CreateWindowAndRenderer failed";
-  };
+  }
+  SDL_GetWindowSize(window, &width, &height);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -172,6 +168,9 @@ Screen::Screen(int w, int h) {
     printf("Cannot load file resources/atlas.png\n");
   }
   SDL_FreeSurface(surface);
+
+  t1 = SDL_GetTicks();
+  t2 = t1;
 }
 
 Screen::~Screen() {

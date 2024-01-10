@@ -366,7 +366,6 @@ void Player::get_off_ladder() {
 }
 
 void Player::draw(Screen &screen) {
-  printf("state: %d\n", state);
   dynamic_obj.texture->change_state(state);
   dynamic_obj.draw(&screen);
 }

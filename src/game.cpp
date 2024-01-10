@@ -81,10 +81,9 @@ public:
   }
 
   void main_loop() {
-    while (1) {
-      bool quit = process_input();
-      if (quit)
-        break;
+    bool quit = false;
+    while (!quit) {
+      quit = process_input();
       update_and_render();
     };
   }

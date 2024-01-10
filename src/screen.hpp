@@ -10,7 +10,8 @@ extern "C" {
 }
 
 #define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_HEIGHT 360
+
 #define TARGET_FPS 120
 #define WINDOW_TITLE "King Donkey game"
 
@@ -50,7 +51,7 @@ public:
 
   void clear();
   void sleep(double ms);
-  void limit_fps();
+  void limit_fps(double fps_timer);
   double tick();
   void render();
 

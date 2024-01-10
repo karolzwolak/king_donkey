@@ -22,6 +22,12 @@ World::World(int w, int h)
   barrels = new Barrel[100];
   barrel_count = 0;
 
+  tiles[tile_count++] = Tile(Vector2(0, 0), tile_texture);
+  tiles[tile_count++] = Tile(Vector2(2, 2), tile_texture);
+  tiles[tile_count++] = Tile(Vector2(10, 10), tile_texture);
+  tiles[tile_count++] = Tile(Vector2(20, 20), tile_texture);
+  tiles[tile_count++] = Tile(Vector2(640 - 16, 360 - 8), tile_texture);
+
   int x = 0;
   int y = 200;
   for (int i = 0; i < 10; i++) {
@@ -29,13 +35,18 @@ World::World(int w, int h)
     x += TILE_WIDTH;
     y -= CLIMB_THRESHOLD;
   }
+
+  for (int i = 0; i < 10; i++) {
+    tiles[tile_count++] = Tile(Vector2(x, y), tile_texture);
+    x += TILE_WIDTH;
+  }
   tiles[tile_count++] = Tile(Vector2(x, y - 16), tile_texture);
 
   ladders[ladder_count++] = Ladder(Vector2(100, 100), 10, ladder_texture);
   tiles[tile_count++] = Tile(Vector2(100, 100), tile_texture);
 
-  barrels[barrel_count++] = Barrel(Vector2(100, 80), DIR_RIGHT, barrel_texture);
-  barrels[barrel_count++] = Barrel(Vector2(120, 80), DIR_LEFT, barrel_texture);
+  barrels[barrel_count++] = Barrel(Vector2(10, 20), DIR_RIGHT, barrel_texture);
+  barrels[barrel_count++] = Barrel(Vector2(0, 20), DIR_LEFT, barrel_texture);
 }
 
 Ladder *World::intersecting_ladder(DynamicObject *obj) {
