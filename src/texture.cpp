@@ -1,6 +1,5 @@
 #include "texture.hpp"
 #include "objects.hpp"
-#include "world.hpp"
 #include <cassert>
 
 AnimationFrames::AnimationFrames(int atlas_x, int atlas_y, int frame_count,

@@ -4,7 +4,7 @@
 #include "screen.hpp"
 #include "texture.hpp"
 
-#define MAX_BARREL_COUNT 1
+#define MAX_BARREL_COUNT 20
 #define MAX_TILE_COUNT 300
 #define MAX_LADDER_COUNT 20
 
