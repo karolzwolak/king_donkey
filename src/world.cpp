@@ -5,18 +5,22 @@
 #include <cassert>
 
 World::World(int w, int h, TextureManager &textures)
-    : width(w), height(h), player(Vector2(0, 0)), tiles(NULL), tile_count(0),
-      ladders(NULL), ladder_count(0), barrels(NULL), barrel_count(0),
-      textures(textures),
+    : width(w), height(h), player(Vector2(PLAYER_START_X, PLAYER_START_Y)),
+      tiles(NULL), tile_count(0), ladders(NULL), ladder_count(0), barrels(NULL),
+      barrel_count(0), textures(textures),
       barrel_spawner(
           BarrelSpawner(Vector2(5, LOGICAL_SCREEN_HEIGHT - 38 * TILE_HEIGHT -
                                        BARREL_SPAWNER_HEIGHT))) {
+  gen_level();
+}
 
+void World::gen_level() {
   tiles = new Tile[MAX_TILE_COUNT];
   tile_count = 0;
 
   ladders = new Ladder[MAX_LADDER_COUNT];
   ladder_count = 0;
+
   barrels = new Barrel[MAX_LADDER_COUNT];
   barrel_count = 0;
 
@@ -29,6 +33,12 @@ World::World(int w, int h, TextureManager &textures)
   gen_tile_line(26, 4, 32, -1.5, 6, 2);
 
   gen_tile_line(0, 5, 38, 0);
+}
+
+void World::reset_level() {
+  barrel_count = 0;
+  player.dynamic_obj.reset(Vector2(PLAYER_START_X, PLAYER_START_Y));
+  barrel_spawner.reset();
 }
 
 World::~World() {
@@ -114,6 +124,12 @@ AnimatedTexture BarrelSpawner::create_texture() {
   texture.add_animation(SPAWNING, AnimationFrames(0, 47, 1, 0, 0, OR_NONE));
 
   return texture;
+}
+
+void BarrelSpawner::reset() {
+  state = WAITING;
+  timer = 0;
+  id_to_replace = -1;
 }
 
 bool BarrelSpawner::check_can_spawn(World *world) {

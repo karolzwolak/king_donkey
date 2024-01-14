@@ -46,6 +46,9 @@ public:
     case SDLK_SPACE:
       world.player.jump();
       break;
+    case SDLK_n:
+      world.reset_level();
+      break;
     };
     return false;
   }

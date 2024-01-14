@@ -22,6 +22,7 @@ AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
 }
 
 AnimatedTexture::~AnimatedTexture() {
+  printf("deleting animated texture\n");
   /* delete[] state_animations; */
   /* delete[] id_to_state; */
 }

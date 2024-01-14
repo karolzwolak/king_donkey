@@ -48,7 +48,7 @@ Ladder::Ladder(Vector2 pos, int parts, SimpleTexture *texture)
 Ladder::Ladder() : Ladder(Vector2(0, 0), 0, NULL) {}
 
 SimpleTexture Ladder::create_texture() {
-  SimpleTexture texture = SimpleTexture(50, 35, 8, 8);
+  SimpleTexture texture(50, 35, 8, 8);
   return texture;
 }
 
@@ -225,6 +225,12 @@ void DynamicObject::vertical_movement(MoveDirection dir, double dt) {
     fall_dist = 0;
 }
 
+void DynamicObject::reset(Vector2 pos) {
+  rect_obj.pos = pos;
+  velocity = Vector2(0, 0);
+  acceleration = Vector2(0, GRAVITY);
+}
+
 void DynamicObject::update_texture(double dt, int state) {
   texture.update(dt, velocity.x == 0 && velocity.y == 0);
   texture.change_orientation(orientation);
@@ -253,7 +259,7 @@ Player::Player(Vector2 pos)
       on_ladder(false), move_direction(DIR_NONE) {}
 
 AnimatedTexture Player::create_texture() {
-  AnimatedTexture texture = AnimatedTexture(16, 16);
+  AnimatedTexture texture(16, 16);
 
   AnimationFrames idle_frames = AnimationFrames(0, 17, 1, 0, 0, OR_RIGHT);
   AnimationFrames run_frames = AnimationFrames(0, 17, 3, 0.15, 0, OR_RIGHT);
@@ -324,7 +330,7 @@ void Barrel::freeze() {
 }
 
 AnimatedTexture Barrel::create_texture() {
-  AnimatedTexture texture = AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
+  AnimatedTexture texture(BARREL_WIDTH, BARREL_HEIGHT);
   AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.1, 0, OR_NONE);
   texture.add_animation(WALKING, walk_frames);
   return texture;

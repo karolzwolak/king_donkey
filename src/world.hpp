@@ -18,6 +18,9 @@
 #define BARREL_SPAWN_X_OFFSET 41
 #define BARREL_SPAWN_Y_OFFSET 20
 
+#define PLAYER_START_X 32
+#define PLAYER_START_Y 32
+
 class World;
 
 enum BarrelSpawnerState {
@@ -41,6 +44,7 @@ public:
 
   int get_fallen_off_id(World *world);
 
+  void reset();
   bool check_can_spawn(World *world);
   void update(World *world, double dt);
   void draw(Screen &screen);
@@ -69,6 +73,8 @@ public:
   World(int w, int h, TextureManager &textures);
   ~World();
 
+  void gen_level();
+  void reset_level();
   void update(double dt);
   void gen_tile_line(int skip_front, int skip_back, int tiles_from_bot,
                      double dy, int ladder_on_id = 0, int ladder_parts = 0);

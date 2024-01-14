@@ -107,6 +107,7 @@ public:
   void horizontal_movement(MoveDirection dir, double dt);
   void vertical_movement(MoveDirection dir, double dt);
 
+  void reset(Vector2 pos);
   void update(MoveDirection dir, World *world, double dt);
   void update_texture(double dt, int state = -1);
   void draw(Screen *screen);
