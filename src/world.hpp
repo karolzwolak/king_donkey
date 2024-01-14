@@ -79,9 +79,9 @@ public:
 
   BarrelSpawner barrel_spawner;
 
-  TextureManager &textures;
+  StaticTextureManager &textures;
 
-  World(int w, int h, TextureManager &textures);
+  World(int w, int h, StaticTextureManager &textures);
   ~World();
 
   void gen_level();

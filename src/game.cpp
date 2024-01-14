@@ -8,7 +8,7 @@
 class Game {
   Screen screen;
   World world;
-  TextureManager textures;
+  StaticTextureManager textures;
 
 public:
   Game(int w, int h)

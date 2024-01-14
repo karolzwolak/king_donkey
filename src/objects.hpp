@@ -93,6 +93,7 @@ public:
 public:
   DynamicObject(Vector2 pos, int w, int h, double horizontal_move_vel,
                 AnimatedTexture texture);
+  ~DynamicObject();
 
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);

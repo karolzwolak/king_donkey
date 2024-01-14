@@ -96,6 +96,8 @@ void DynamicObject::limit_velocity() {
     velocity.y = sign(velocity.y) * MAX_VELOCITY;
 }
 
+DynamicObject::~DynamicObject() { texture.delete_animations(); }
+
 void DynamicObject::set_velocity(Vector2 v) { velocity = v; }
 
 void DynamicObject::set_acceleration_x(float x) { acceleration.x = x; }

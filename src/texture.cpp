@@ -21,11 +21,6 @@ AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
   id_to_state = new int[MAX_STATES];
 }
 
-AnimatedTexture::~AnimatedTexture() {
-  /* delete[] state_animations; */
-  /* delete[] id_to_state; */
-}
-
 AnimationFrames *AnimatedTexture::find_animation(int state_val) {
   for (int i = 0; i < animation_count; i++) {
     if (id_to_state[i] == state_val) {
@@ -86,6 +81,11 @@ void AnimatedTexture::add_animation(int state_val, AnimationFrames frames) {
   }
 }
 
+void AnimatedTexture::delete_animations() {
+  delete[] state_animations;
+  delete[] id_to_state;
+}
+
 SDL_Rect *AnimatedTexture::get_curr_frame() {
   assert(curr_animation != NULL);
   int frame_id = curr_frame;
@@ -107,6 +107,6 @@ SimpleTexture::SimpleTexture(int atlas_x, int atlas_y, int width, int height)
     : atlas_x(atlas_x), atlas_y(atlas_y), width(width), height(height),
       rect({atlas_x, atlas_y, width, height}) {}
 
-TextureManager::TextureManager()
+StaticTextureManager::StaticTextureManager()
     : tile_texture(Tile::create_texture()),
       ladder_texture(Ladder::create_texture()) {}

@@ -8,7 +8,7 @@ double random_double(double min, double max) {
   return min + (double)rand() / RAND_MAX * (max - min);
 }
 
-World::World(int w, int h, TextureManager &textures)
+World::World(int w, int h, StaticTextureManager &textures)
     : time_elapsed(0), width(w), height(h),
       player(Vector2(PLAYER_START_X, PLAYER_START_Y)), tiles(NULL),
       tile_count(0), ladders(NULL), ladder_count(0), barrels(NULL),

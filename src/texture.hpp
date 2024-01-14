@@ -45,12 +45,10 @@ public:
   int frame_width, frame_height;
 
   AnimatedTexture(int frame_width, int frame_height);
-  /* AnimatedTexture(AnimatedTexture *other); */
   AnimatedTexture();
 
-  ~AnimatedTexture();
-
   void add_animation(int state_val, AnimationFrames frames);
+  void delete_animations();
 
   void change_state(int state_val);
   void update(double delta, bool stationary);
@@ -75,10 +73,10 @@ public:
   void draw(Screen *screen, int x, int y);
 };
 
-class TextureManager {
+class StaticTextureManager {
 public:
   SimpleTexture tile_texture;
   SimpleTexture ladder_texture;
 
-  TextureManager();
+  StaticTextureManager();
 };
