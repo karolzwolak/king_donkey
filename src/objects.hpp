@@ -167,12 +167,14 @@ class Player {
   PlayerState state;
 
 public:
+  double barrel_collision_timer;
   Ladder *ladder;
   DynamicObject dynamic_obj;
   Player(Vector2 pos);
 
   static AnimatedTexture create_texture();
 
+  bool collides_with_barrel(World *world);
   void update(World *world, double dt);
   void draw(Screen &screen);
 

@@ -370,7 +370,21 @@ bool Player::still_on_ladder(World *world) {
          ladder->get_rect()->collides_with(&get_rect());
 }
 
+bool Player::collides_with_barrel(World *world) {
+  for (int i = 0; i < world->barrel_count; i++) {
+    if (get_rect().collides_with(&world->barrels[i].get_rect()))
+      return true;
+  }
+  return false;
+}
+
 void Player::update(World *world, double dt) {
+  if (collides_with_barrel(world)) {
+    barrel_collision_timer += dt;
+  } else {
+    barrel_collision_timer = 0;
+  }
+
   dynamic_obj.update_texture(dt);
 
   dynamic_obj.horizontal_movement(move_direction, dt);
@@ -425,7 +439,10 @@ void Player::get_off_ladder() {
 
 void Player::draw(Screen &screen) {
   dynamic_obj.texture.change_state(state);
-  dynamic_obj.draw(&screen);
+  if (barrel_collision_timer == 0 ||
+      (int)round(barrel_collision_timer * 25) % 2 == 0) {
+    dynamic_obj.draw(&screen);
+  }
 }
 
 void Player::move(MoveDirection dir, bool key_down) {
