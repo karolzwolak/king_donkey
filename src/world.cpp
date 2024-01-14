@@ -102,11 +102,6 @@ void World::update(double dt) {
 }
 
 void World::draw(Screen &screen) {
-  char str[ELAPSED_MAX_LEN];
-  sprintf(str, "Time: %.2fs", time_elapsed);
-  screen.draw_string(ELAPSED_X, ELAPSED_Y, str);
-
-  screen.draw_string(DONE_X, DONE_Y, "done: a, c, e, h");
 
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);
@@ -121,6 +116,12 @@ void World::draw(Screen &screen) {
   }
   player.draw(screen);
   barrel_spawner.draw(screen);
+
+  char str[ELAPSED_MAX_LEN];
+  sprintf(str, "Time: %.2fs", time_elapsed);
+  screen.draw_string(ELAPSED_X, ELAPSED_Y, str);
+
+  screen.draw_string(DONE_X, DONE_Y, "done: a, c, e, h");
 }
 
 BarrelSpawner::BarrelSpawner(Vector2 pos)
