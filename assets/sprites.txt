@@ -1,6 +1,0 @@
-running,0,17,48,16
-jumping,0,0,96,16
-climbing,49,17,32,16
-
-barrel,0,34,48,12
-tiles,49,34,28,10
