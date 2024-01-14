@@ -129,9 +129,13 @@ bool DynamicObject::check_tile_collisions_x(World *world) {
   return out_of_bounds;
 }
 
-bool DynamicObject::check_tile_collisions_y(World *world) {
+bool DynamicObject::check_tile_collisions_y(World *world, bool check_bounds) {
   on_ground = false;
-  bool out_of_bounds = check_out_of_bounds_y(world);
+
+  bool out_of_bounds = false;
+  if (check_bounds) {
+    out_of_bounds = check_out_of_bounds_y(world);
+  }
 
   for (int i = 0; i < world->tile_count; i++) {
 
@@ -299,13 +303,13 @@ void Player::player_vertical_movement(double dt) {
 
 Barrel::Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture)
     : dynamic_obj(pos, BARREL_WIDTH, BARREL_HEIGHT, BARREL_MOVE_VEL, texture),
-      move_direction(dir) {}
+      move_direction(dir), fallen_off(false) {}
 
 Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE, NULL){};
 
 AnimatedTexture Barrel::create_texture() {
   AnimatedTexture texture = AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
-  AnimationFrames walk_frames = AnimationFrames(0, 34, 1, 0.15, 0, OR_NONE);
+  AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.20, 0, OR_NONE);
   texture.add_animation(WALKING, walk_frames);
   return texture;
 }
@@ -321,7 +325,14 @@ void Barrel::update(World *world, double dt) {
   bool hit_wall = dynamic_obj.check_tile_collisions_x(world);
 
   dynamic_obj.vertical_movement(move_direction, dt);
-  bool hit_ground = dynamic_obj.check_tile_collisions_y(world);
+  bool hit_ground = dynamic_obj.check_tile_collisions_y(world, false);
+
+  if (dynamic_obj.rect_obj.bottom() > world->height) {
+    dynamic_obj.rect_obj.pos = Vector2(0, 20);
+    /* fallen_off = true; */
+    /* move_direction = DIR_NONE; */
+    return;
+  }
 
   // if barrel hits wall, or falls off ledge, reverse direction
   if (hit_wall || (hit_ground && !was_coyote))

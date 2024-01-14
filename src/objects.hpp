@@ -101,7 +101,7 @@ public:
 
   bool check_tile_collisions_x(World *world);
   bool check_out_of_bounds_x(World *world);
-  bool check_tile_collisions_y(World *world);
+  bool check_tile_collisions_y(World *world, bool check_bounds = true);
   bool check_out_of_bounds_y(World *world);
 
   void horizontal_movement(MoveDirection dir, double dt);
@@ -142,6 +142,8 @@ public:
 class Barrel {
 
 public:
+  bool fallen_off;
+
   DynamicObject dynamic_obj;
   MoveDirection move_direction;
 
