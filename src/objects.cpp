@@ -374,27 +374,23 @@ void Player::update(World *world, double dt) {
 
   player_vertical_movement(dt);
 
-  Ladder *ladder = world->intersecting_ladder(&dynamic_obj);
-  if (on_ladder && ladder == NULL) {
+  if (on_ladder && !ladder->get_rect()->collides_with(&get_rect()) ||
+      (move_direction == DIR_DOWN &&
+       ladder->get_rect()->bottom() < get_rect().bottom())) {
     get_off_ladder();
     dynamic_obj.check_tile_collisions_y(world);
-    return;
   }
 
   if (!on_ladder) {
     dynamic_obj.check_tile_collisions_y(world);
-    return;
-  }
-  if (move_direction == DIR_DOWN &&
-      ladder->get_rect()->bottom() < get_rect().bottom()) {
-    // first check collisions, because get off ladder adds upwards velocity
-    //  which would cause player to clip through ground
-    dynamic_obj.check_tile_collisions_y(world);
-    get_off_ladder();
   }
 }
 
-void Player::get_on_ladder(Ladder *ladder) {
+void Player::get_on_ladder(Ladder *new_ladder) {
+  if (new_ladder == NULL)
+    return;
+  ladder = new_ladder;
+
   on_ladder = true;
   state = CLIMBING;
 
@@ -405,7 +401,8 @@ void Player::get_on_ladder(Ladder *ladder) {
 }
 
 void Player::get_off_ladder() {
-  state = WALKING;
+  state = FALLING;
+  ladder = NULL;
 
   on_ladder = false;
   dynamic_obj.acceleration.y = GRAVITY;

@@ -166,6 +166,7 @@ class Player {
   PlayerState state;
 
 public:
+  Ladder *ladder;
   DynamicObject dynamic_obj;
   Player(Vector2 pos);
 
