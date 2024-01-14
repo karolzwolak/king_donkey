@@ -45,9 +45,11 @@ public:
   int frame_width, frame_height;
 
   AnimatedTexture(int frame_width, int frame_height);
-  AnimatedTexture(AnimatedTexture &other);
+  /* AnimatedTexture(AnimatedTexture *other); */
+  AnimatedTexture();
 
   ~AnimatedTexture();
+
   void add_animation(int state_val, AnimationFrames frames);
 
   void change_state(int state_val);
@@ -75,11 +77,8 @@ public:
 
 class TextureManager {
 public:
-  AnimatedTexture player_texture;
-  AnimatedTexture barrel_texture;
   SimpleTexture tile_texture;
   SimpleTexture ladder_texture;
-  AnimatedTexture barrel_spawner_texture;
 
   TextureManager();
 };

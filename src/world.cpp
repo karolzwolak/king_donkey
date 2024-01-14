@@ -5,15 +5,12 @@
 #include <cassert>
 
 World::World(int w, int h, TextureManager &textures)
-    : width(w), height(h), player(Vector2(0, 0), NULL), tiles(NULL),
-      tile_count(0), ladders(NULL), ladder_count(0), barrels(NULL),
-      barrel_count(0), textures(textures), barrel_spawner(Vector2(0, 0), NULL) {
-
-  player = Player(Vector2(0, 0), &textures.player_texture);
-  barrel_spawner =
-      BarrelSpawner(Vector2(5, LOGICAL_SCREEN_HEIGHT - 38 * TILE_HEIGHT -
-                                   BARREL_SPAWNER_HEIGHT),
-                    &textures.barrel_spawner_texture);
+    : width(w), height(h), player(Vector2(0, 0)), tiles(NULL), tile_count(0),
+      ladders(NULL), ladder_count(0), barrels(NULL), barrel_count(0),
+      textures(textures),
+      barrel_spawner(
+          BarrelSpawner(Vector2(5, LOGICAL_SCREEN_HEIGHT - 38 * TILE_HEIGHT -
+                                       BARREL_SPAWNER_HEIGHT))) {
 
   tiles = new Tile[MAX_TILE_COUNT];
   tile_count = 0;
@@ -39,6 +36,7 @@ World::~World() {
   delete[] ladders;
   delete[] barrels;
 }
+
 void World::gen_tile_line(int skip_front, int skip_back, int tiles_from_bot,
                           double dy, int ladder_on_id, int ladder_parts) {
   int len = LOGICAL_SCREEN_WIDTH / TILE_WIDTH - skip_front - skip_back;
@@ -101,8 +99,9 @@ void World::draw(Screen &screen) {
   barrel_spawner.draw(screen);
 }
 
-BarrelSpawner::BarrelSpawner(Vector2 pos, AnimatedTexture *texture)
-    : pos(pos), texture(texture), state(WAITING), timer(0), id_to_replace(-1) {}
+BarrelSpawner::BarrelSpawner(Vector2 pos)
+    : pos(pos), texture(BarrelSpawner::create_texture()), state(WAITING),
+      timer(0), id_to_replace(-1) {}
 
 AnimatedTexture BarrelSpawner::create_texture() {
   AnimatedTexture texture(BARREL_SPAWNER_WIDTH, BARREL_SPAWNER_HEIGHT);
@@ -126,7 +125,7 @@ bool BarrelSpawner::check_can_spawn(World *world) {
 
 void BarrelSpawner::update(World *world, double dt) {
   timer += dt;
-  texture->update(dt, true);
+  texture.update(dt, true);
 
   switch (state) {
   case WAITING:
@@ -152,11 +151,11 @@ void BarrelSpawner::update(World *world, double dt) {
     break;
   };
 
-  texture->change_state(state);
+  texture.change_state(state);
 }
 
 void BarrelSpawner::draw(Screen &screen) {
-  texture->draw(&screen, pos.x, pos.y);
+  texture.draw(&screen, pos.x, pos.y);
 }
 
 int BarrelSpawner::get_fallen_off_id(World *world) {
@@ -168,21 +167,17 @@ int BarrelSpawner::get_fallen_off_id(World *world) {
   return -1;
 }
 
-Barrel BarrelSpawner::get_barrel(World *world) {
-  Vector2 b_pos(this->pos.x + BARREL_SPAWN_X_OFFSET,
-                this->pos.y + BARREL_SPAWN_Y_OFFSET);
-
-  return Barrel(b_pos, &world->textures.barrel_texture);
-}
-
 void BarrelSpawner::spawn(World *world) {
+  Vector2 pos = Vector2(this->pos.x + BARREL_SPAWN_X_OFFSET,
+                        this->pos.y + BARREL_SPAWN_Y_OFFSET);
+
   if (id_to_replace >= 0) {
     // if theres is barrel to replace (teleport), swap it with the last one
     // so the newest barrel is always at the end of the array
     world->barrels[id_to_replace] = world->barrels[world->barrel_count - 1];
-    world->barrels[world->barrel_count - 1] = get_barrel(world);
+    world->barrels[world->barrel_count - 1].get_rect().pos = pos;
     id_to_replace = -1;
     return;
   }
-  world->barrels[world->barrel_count++] = get_barrel(world);
+  world->barrels[world->barrel_count++].get_rect().pos = pos;
 }

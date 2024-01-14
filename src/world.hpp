@@ -4,7 +4,7 @@
 #include "screen.hpp"
 #include "texture.hpp"
 
-#define MAX_BARREL_COUNT 20
+#define MAX_BARREL_COUNT 1
 #define MAX_TILE_COUNT 300
 #define MAX_LADDER_COUNT 20
 
@@ -28,7 +28,7 @@ enum BarrelSpawnerState {
 
 class BarrelSpawner {
 public:
-  AnimatedTexture *texture;
+  AnimatedTexture texture;
   Vector2 pos;
   BarrelSpawnerState state;
   double timer;
@@ -37,10 +37,9 @@ public:
 
   static AnimatedTexture create_texture();
 
-  BarrelSpawner(Vector2 pos, AnimatedTexture *texture);
+  BarrelSpawner(Vector2 pos);
 
   int get_fallen_off_id(World *world);
-  Barrel get_barrel(World *world);
 
   bool check_can_spawn(World *world);
   void update(World *world, double dt);

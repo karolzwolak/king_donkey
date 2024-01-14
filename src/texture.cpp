@@ -18,14 +18,13 @@ AnimatedTexture::AnimatedTexture(int frame_width, int frame_height)
     : frame_width(frame_width), frame_height(frame_height), animation_count(0),
       curr_animation(NULL), rect({0, 0, frame_width, frame_height}),
       curr_frame(0), timer(0), curr_orientation(OR_NONE), curr_state(0) {
-
   state_animations = new AnimationFrames[MAX_STATES];
   id_to_state = new int[MAX_STATES];
 }
 
 AnimatedTexture::~AnimatedTexture() {
-  delete[] state_animations;
-  delete[] id_to_state;
+  /* delete[] state_animations; */
+  /* delete[] id_to_state; */
 }
 
 AnimationFrames *AnimatedTexture::find_animation(int state_val) {
@@ -110,8 +109,5 @@ SimpleTexture::SimpleTexture(int atlas_x, int atlas_y, int width, int height)
       rect({atlas_x, atlas_y, width, height}) {}
 
 TextureManager::TextureManager()
-    : player_texture(Player::create_texture()),
-      barrel_texture(Barrel::create_texture()),
-      tile_texture(Tile::create_texture()),
-      ladder_texture(Ladder::create_texture()),
-      barrel_spawner_texture(BarrelSpawner::create_texture()) {}
+    : tile_texture(Tile::create_texture()),
+      ladder_texture(Ladder::create_texture()) {}

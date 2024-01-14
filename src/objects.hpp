@@ -88,13 +88,13 @@ public:
   bool on_ground;
   bool coyote_on_ground;
   Orientation orientation;
-  AnimatedTexture *texture;
+  AnimatedTexture texture;
 
   void limit_velocity();
 
 public:
   DynamicObject(Vector2 pos, int w, int h, double horizontal_move_vel,
-                AnimatedTexture *texture);
+                AnimatedTexture texture);
 
   void set_velocity(Vector2 v);
   void set_acceleration_x(float x);
@@ -147,7 +147,7 @@ public:
   DynamicObject dynamic_obj;
   MoveDirection move_direction;
 
-  Barrel(Vector2 pos, AnimatedTexture *texture);
+  Barrel(Vector2 pos);
   Barrel();
 
   static AnimatedTexture create_texture();
@@ -167,7 +167,7 @@ class Player {
 
 public:
   DynamicObject dynamic_obj;
-  Player(Vector2 pos, AnimatedTexture *texture);
+  Player(Vector2 pos);
 
   static AnimatedTexture create_texture();
 

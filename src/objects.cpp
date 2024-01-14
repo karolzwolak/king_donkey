@@ -84,11 +84,10 @@ void Tile::draw(Screen &screen) { static_obj.draw(&screen); }
 
 DynamicObject::DynamicObject(Vector2 pos, int w, int h,
                              double horizontal_move_vel,
-
-                             AnimatedTexture *texture)
-    : rect_obj(pos, w, h), texture(texture), velocity(0, 0),
+                             AnimatedTexture texture)
+    : rect_obj(pos, w, h), velocity(0, 0),
       horizontal_move_vel(horizontal_move_vel), acceleration(0, GRAVITY),
-      on_ground(false), orientation(OR_NONE) {}
+      on_ground(false), orientation(OR_NONE), texture(texture) {}
 
 void DynamicObject::limit_velocity() {
   if (abs(velocity.x) > MAX_VELOCITY)
@@ -227,11 +226,11 @@ void DynamicObject::vertical_movement(MoveDirection dir, double dt) {
 }
 
 void DynamicObject::update_texture(double dt, int state) {
-  texture->update(dt, velocity.x == 0 && velocity.y == 0);
-  texture->change_orientation(orientation);
+  texture.update(dt, velocity.x == 0 && velocity.y == 0);
+  texture.change_orientation(orientation);
 
   if (state >= 0)
-    texture->change_state(state);
+    texture.change_state(state);
 }
 
 void DynamicObject::update(MoveDirection dir, World *world, double dt) {
@@ -245,11 +244,12 @@ void DynamicObject::update(MoveDirection dir, World *world, double dt) {
 }
 
 void DynamicObject::draw(Screen *screen) {
-  texture->draw(screen, rect_obj.pos.x, rect_obj.pos.y);
+  texture.draw(screen, rect_obj.pos.x, rect_obj.pos.y);
 }
 
-Player::Player(Vector2 pos, AnimatedTexture *texture)
-    : dynamic_obj(pos, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_MOVE_VEL, texture),
+Player::Player(Vector2 pos)
+    : dynamic_obj(pos, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_MOVE_VEL,
+                  Player::create_texture()),
       on_ladder(false), move_direction(DIR_NONE) {}
 
 AnimatedTexture Player::create_texture() {
@@ -301,16 +301,16 @@ void Player::player_vertical_movement(double dt) {
   dynamic_obj.vertical_movement(move_direction, dt);
 }
 
-Barrel::Barrel(Vector2 pos, AnimatedTexture *texture)
-    : dynamic_obj(pos, BARREL_WIDTH, BARREL_HEIGHT, BARREL_MOVE_VEL, texture),
+Barrel::Barrel(Vector2 pos)
+    : dynamic_obj(pos, BARREL_WIDTH, BARREL_HEIGHT, BARREL_MOVE_VEL,
+                  Barrel::create_texture()),
       move_direction(DIR_NONE), fallen_off(false) {
-
   dynamic_obj.coyote_on_ground = true;
   dynamic_obj.on_ground = true;
   freeze();
 }
 
-Barrel::Barrel() : Barrel(Vector2(0, 0), NULL){};
+Barrel::Barrel() : Barrel(Vector2(0, 0)){};
 
 void Barrel::start_moving(MoveDirection dir) {
   dynamic_obj.acceleration.y = GRAVITY;
@@ -324,7 +324,7 @@ void Barrel::freeze() {
 
 AnimatedTexture Barrel::create_texture() {
   AnimatedTexture texture = AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
-  AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.20, 0, OR_NONE);
+  AnimationFrames walk_frames = AnimationFrames(0, 34, 4, 0.1, 0, OR_NONE);
   texture.add_animation(WALKING, walk_frames);
   return texture;
 }
@@ -416,7 +416,7 @@ void Player::get_off_ladder() {
 }
 
 void Player::draw(Screen &screen) {
-  dynamic_obj.texture->change_state(state);
+  dynamic_obj.texture.change_state(state);
   dynamic_obj.draw(&screen);
 }
 
