@@ -79,6 +79,7 @@ public:
   AnimatedTexture barrel_texture;
   SimpleTexture tile_texture;
   SimpleTexture ladder_texture;
+  AnimatedTexture barrel_spawner_texture;
 
   TextureManager();
 };

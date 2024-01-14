@@ -1,5 +1,6 @@
 #include "texture.hpp"
 #include "objects.hpp"
+#include "world.hpp"
 #include <cassert>
 
 AnimationFrames::AnimationFrames(int atlas_x, int atlas_y, int frame_count,
@@ -112,4 +113,5 @@ TextureManager::TextureManager()
     : player_texture(Player::create_texture()),
       barrel_texture(Barrel::create_texture()),
       tile_texture(Tile::create_texture()),
-      ladder_texture(Ladder::create_texture()) {}
+      ladder_texture(Ladder::create_texture()),
+      barrel_spawner_texture(BarrelSpawner::create_texture()) {}

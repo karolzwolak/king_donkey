@@ -301,11 +301,26 @@ void Player::player_vertical_movement(double dt) {
   dynamic_obj.vertical_movement(move_direction, dt);
 }
 
-Barrel::Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture)
+Barrel::Barrel(Vector2 pos, AnimatedTexture *texture)
     : dynamic_obj(pos, BARREL_WIDTH, BARREL_HEIGHT, BARREL_MOVE_VEL, texture),
-      move_direction(dir), fallen_off(false) {}
+      move_direction(DIR_NONE), fallen_off(false) {
 
-Barrel::Barrel() : Barrel(Vector2(0, 0), DIR_NONE, NULL){};
+  dynamic_obj.coyote_on_ground = true;
+  dynamic_obj.on_ground = true;
+  freeze();
+}
+
+Barrel::Barrel() : Barrel(Vector2(0, 0), NULL){};
+
+void Barrel::start_moving(MoveDirection dir) {
+  dynamic_obj.acceleration.y = GRAVITY;
+  move_direction = dir;
+}
+
+void Barrel::freeze() {
+  dynamic_obj.acceleration.y = 0;
+  move_direction = DIR_NONE;
+}
 
 AnimatedTexture Barrel::create_texture() {
   AnimatedTexture texture = AnimatedTexture(BARREL_WIDTH, BARREL_HEIGHT);
@@ -328,9 +343,8 @@ void Barrel::update(World *world, double dt) {
   bool hit_ground = dynamic_obj.check_tile_collisions_y(world, false);
 
   if (dynamic_obj.rect_obj.bottom() > world->height) {
-    dynamic_obj.rect_obj.pos = Vector2(0, 20);
-    /* fallen_off = true; */
-    /* move_direction = DIR_NONE; */
+    fallen_off = true;
+    move_direction = DIR_NONE;
     return;
   }
 

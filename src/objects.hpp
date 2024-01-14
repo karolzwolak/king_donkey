@@ -147,13 +147,15 @@ public:
   DynamicObject dynamic_obj;
   MoveDirection move_direction;
 
-  Barrel(Vector2 pos, MoveDirection dir, AnimatedTexture *texture);
+  Barrel(Vector2 pos, AnimatedTexture *texture);
   Barrel();
 
   static AnimatedTexture create_texture();
 
   RectObject &get_rect();
 
+  void start_moving(MoveDirection dir);
+  void freeze();
   void update(World *world, double dt);
   void draw(Screen &screen);
 };
