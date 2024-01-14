@@ -358,6 +358,12 @@ void Barrel::draw(Screen &screen) { dynamic_obj.draw(&screen); }
 
 RectObject &Player::get_rect() { return dynamic_obj.rect_obj; }
 
+bool Player::still_on_ladder(World *world) {
+  return (move_direction == DIR_DOWN &&
+          ladder->get_rect()->bottom() >= get_rect().bottom()) ||
+         ladder->get_rect()->collides_with(&get_rect());
+}
+
 void Player::update(World *world, double dt) {
   dynamic_obj.update_texture(dt);
 
@@ -374,11 +380,9 @@ void Player::update(World *world, double dt) {
 
   player_vertical_movement(dt);
 
-  if (on_ladder && !ladder->get_rect()->collides_with(&get_rect()) ||
-      (move_direction == DIR_DOWN &&
-       ladder->get_rect()->bottom() < get_rect().bottom())) {
-    get_off_ladder();
+  if (on_ladder && !still_on_ladder(world)) {
     dynamic_obj.check_tile_collisions_y(world);
+    get_off_ladder();
   }
 
   if (!on_ladder) {

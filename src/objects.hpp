@@ -179,6 +179,7 @@ public:
 
   bool check_on_ladder(World *world);
 
+  bool still_on_ladder(World *world);
   void get_on_ladder(Ladder *ladder);
   void get_off_ladder();
   void player_vertical_movement(double dt);
