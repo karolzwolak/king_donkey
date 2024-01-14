@@ -313,6 +313,7 @@ Barrel::Barrel(Vector2 pos)
 Barrel::Barrel() : Barrel(Vector2(0, 0)){};
 
 void Barrel::start_moving(MoveDirection dir) {
+  fallen_off = false;
   dynamic_obj.acceleration.y = GRAVITY;
   move_direction = dir;
 }
