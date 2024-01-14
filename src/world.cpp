@@ -5,8 +5,9 @@
 #include <cassert>
 
 World::World(int w, int h, TextureManager &textures)
-    : width(w), height(h), player(Vector2(PLAYER_START_X, PLAYER_START_Y)),
-      tiles(NULL), tile_count(0), ladders(NULL), ladder_count(0), barrels(NULL),
+    : time_elapsed(0), width(w), height(h),
+      player(Vector2(PLAYER_START_X, PLAYER_START_Y)), tiles(NULL),
+      tile_count(0), ladders(NULL), ladder_count(0), barrels(NULL),
       barrel_count(0), textures(textures),
       barrel_spawner(
           BarrelSpawner(Vector2(5, LOGICAL_SCREEN_HEIGHT - 38 * TILE_HEIGHT -
@@ -36,6 +37,7 @@ void World::gen_level() {
 }
 
 void World::reset_level() {
+  time_elapsed = 0;
   barrel_count = 0;
   player.dynamic_obj.reset(Vector2(PLAYER_START_X, PLAYER_START_Y));
   barrel_spawner.reset();
@@ -84,6 +86,8 @@ Ladder *World::intersecting_ladder(DynamicObject *obj) {
 }
 
 void World::update(double dt) {
+  time_elapsed += dt;
+
   player.update(this, dt);
 
   for (int i = 0; i < barrel_count; i++) {
@@ -94,6 +98,10 @@ void World::update(double dt) {
 }
 
 void World::draw(Screen &screen) {
+  char str[ELAPSED_MAX_LEN];
+  sprintf(str, "Time: %.2fs", time_elapsed);
+  screen.draw_string(ELAPSED_X, ELAPSED_Y, str);
+
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);
   }

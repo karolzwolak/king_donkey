@@ -21,6 +21,10 @@
 #define PLAYER_START_X 32
 #define PLAYER_START_Y 32
 
+#define ELAPSED_X 5
+#define ELAPSED_Y 5
+#define ELAPSED_MAX_LEN 20
+
 class World;
 
 enum BarrelSpawnerState {
@@ -54,6 +58,8 @@ public:
 class World {
 
 public:
+  double time_elapsed;
+
   int width, height;
   Player player;
 
