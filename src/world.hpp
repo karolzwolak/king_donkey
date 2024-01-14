@@ -8,9 +8,10 @@
 #define MAX_TILE_COUNT 300
 #define MAX_LADDER_COUNT 20
 
-#define BARREL_SPAWN_DELAY 1.5
-#define BARREL_ABOUT_TO_SPAWN_TIME 0.85
-#define BARREL_SPAWN_TIME 0.2
+#define MIN_BARREL_SPAWN_DELAY 0.05
+#define MAX_BARREL_SPAWN_DELAY 1.
+#define BARREL_ABOUT_TO_SPAWN_TIME 0.7
+#define BARREL_SPAWN_TIME 0.1
 
 #define BARREL_SPAWNER_WIDTH 46
 #define BARREL_SPAWNER_HEIGHT 32
@@ -33,12 +34,15 @@ enum BarrelSpawnerState {
   SPAWNING,
 };
 
+double random_double(double min, double max);
+
 class BarrelSpawner {
 public:
   AnimatedTexture texture;
   Vector2 pos;
   BarrelSpawnerState state;
   double timer;
+  double spawn_delay;
 
   int id_to_replace;
 
@@ -48,6 +52,7 @@ public:
 
   int get_fallen_off_id(World *world);
 
+  double random_spawn_delay();
   void reset();
   bool check_can_spawn(World *world);
   void update(World *world, double dt);

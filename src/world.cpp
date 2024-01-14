@@ -4,6 +4,10 @@
 #include "texture.hpp"
 #include <cassert>
 
+double random_double(double min, double max) {
+  return min + (double)rand() / RAND_MAX * (max - min);
+}
+
 World::World(int w, int h, TextureManager &textures)
     : time_elapsed(0), width(w), height(h),
       player(Vector2(PLAYER_START_X, PLAYER_START_Y)), tiles(NULL),
@@ -119,12 +123,11 @@ void World::draw(Screen &screen) {
 
 BarrelSpawner::BarrelSpawner(Vector2 pos)
     : pos(pos), texture(BarrelSpawner::create_texture()), state(WAITING),
-      timer(0), id_to_replace(-1) {}
+      timer(0), id_to_replace(-1), spawn_delay(MIN_BARREL_SPAWN_DELAY) {}
 
 AnimatedTexture BarrelSpawner::create_texture() {
   AnimatedTexture texture(BARREL_SPAWNER_WIDTH, BARREL_SPAWNER_HEIGHT);
-  texture.add_animation(
-      WAITING, AnimationFrames(92, 15, 1, BARREL_SPAWN_DELAY, 0, OR_NONE));
+  texture.add_animation(WAITING, AnimationFrames(92, 15, 1, 0, 0, OR_NONE));
 
   texture.add_animation(ABOUT_TO_SPAWN,
                         AnimationFrames(46, 47, 2, 0.15, 0, OR_NONE));
@@ -147,15 +150,20 @@ bool BarrelSpawner::check_can_spawn(World *world) {
   return id_to_replace >= 0 || world->barrel_count < MAX_BARREL_COUNT;
 }
 
+double BarrelSpawner::random_spawn_delay() {
+  return random_double(MAX_BARREL_SPAWN_DELAY, MAX_BARREL_SPAWN_DELAY);
+}
+
 void BarrelSpawner::update(World *world, double dt) {
   timer += dt;
   texture.update(dt, true);
 
   switch (state) {
   case WAITING:
-    if (timer >= BARREL_SPAWN_DELAY && check_can_spawn(world)) {
+    if (timer >= spawn_delay && check_can_spawn(world)) {
       state = ABOUT_TO_SPAWN;
       timer = 0;
+      spawn_delay = random_spawn_delay();
     }
     break;
   case ABOUT_TO_SPAWN:
