@@ -68,7 +68,6 @@ double Screen::tick() {
     fps = frames * 2;
     frames = 0;
     fps_timer -= 0.5;
-    printf("fps: %f\n", fps);
   };
   frames++;
 
@@ -82,6 +81,8 @@ void Screen::render() { SDL_RenderPresent(renderer); }
 Screen::Screen(int w, int h) {
   fps_timer = 0;
   fps = 0;
+  dt = 0;
+  frames = 0;
   target_fps = TARGET_FPS;
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

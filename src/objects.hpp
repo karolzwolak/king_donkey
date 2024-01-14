@@ -64,8 +64,6 @@ public:
   double center_x();
   double center_y();
 
-  /* void draw_simple(Screen *screen, SimpleTexture *texture); */
-  /* void draw_animated(Screen *screen, AnimatedTexture *texture); */
   bool collides_with(RectObject *obj);
 };
 

@@ -262,7 +262,8 @@ AnimatedTexture Player::create_texture() {
   AnimatedTexture texture(16, 16);
 
   AnimationFrames idle_frames = AnimationFrames(0, 17, 1, 0, 0, OR_RIGHT);
-  AnimationFrames run_frames = AnimationFrames(0, 17, 3, 0.15, 0, OR_RIGHT);
+  AnimationFrames run_frames =
+      AnimationFrames(0, 17, 3, 0.15, 0, OR_RIGHT, false);
   AnimationFrames climb_frames =
       AnimationFrames(49, 17, 2, 0.15, 0, OR_NONE, false);
 
