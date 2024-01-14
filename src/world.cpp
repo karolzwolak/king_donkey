@@ -106,6 +106,8 @@ void World::draw(Screen &screen) {
   sprintf(str, "Time: %.2fs", time_elapsed);
   screen.draw_string(ELAPSED_X, ELAPSED_Y, str);
 
+  screen.draw_string(DONE_X, DONE_Y, "done: a, c, e, h");
+
   for (int i = 0; i < tile_count; i++) {
     tiles[i].draw(screen);
   }
