@@ -25,8 +25,6 @@ public:
   int width, height;
 
   SDL_Texture *atlas;
-  SDL_Surface *screen;
-  SDL_Texture *scrtex;
   SDL_Window *window;
   SDL_Renderer *renderer;
 

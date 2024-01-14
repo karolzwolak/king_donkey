@@ -18,8 +18,6 @@ void Screen::draw_string(int x, int y, const char *text) {
     s.y = py;
     d.x = x;
     d.y = y;
-    /* SDL_BlitSurface(charset, &s, screen, &d); */
-    /* SDL_BlitSurface(charset, &s, screen, &d); */
     SDL_RenderCopy(renderer, charset, &s, &d);
     x += 8;
     text++;
@@ -42,14 +40,9 @@ void Screen::draw_atlas_texture(SDL_Rect *sprite, double _x, double _y,
     return;
   }
   SDL_RenderCopy(renderer, atlas, sprite, &dest);
-  /* SDL_BlitSurface(atlas, sprite, screen, &dest); */
 }
 
-void Screen::clear() {
-  /* SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0)); */
-  SDL_RenderClear(renderer);
-  /* SDL_FillRect(screen.screen, NULL, czarny); */
-}
+void Screen::clear() { SDL_RenderClear(renderer); }
 
 void Screen::sleep(double ms) {
   if (ms <= 0)
@@ -84,13 +77,7 @@ double Screen::tick() {
   return dt;
 }
 
-void Screen::render() {
-  /* SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch); */
-  /* SDL_RenderClear(renderer); */
-  /* SDL_RenderCopy(renderer, scrtex, NULL, NULL); */
-
-  SDL_RenderPresent(renderer);
-}
+void Screen::render() { SDL_RenderPresent(renderer); }
 
 Screen::Screen(int w, int h) {
   fps_timer = 0;
@@ -117,20 +104,11 @@ Screen::Screen(int w, int h) {
   }
   SDL_GetWindowSize(window, &width, &height);
 
-  /* SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best"); */
   SDL_RenderSetLogicalSize(renderer, LOGICAL_SCREEN_WIDTH,
                            LOGICAL_SCREEN_HEIGHT);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
   SDL_SetWindowTitle(window, WINDOW_TITLE);
-
-  screen =
-      SDL_CreateRGBSurface(0, LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT, 32,
-                           0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-
-  scrtex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-                             SDL_TEXTUREACCESS_STREAMING, LOGICAL_SCREEN_WIDTH,
-                             LOGICAL_SCREEN_HEIGHT);
 
   SDL_Surface *surface = SDL_LoadBMP("assets/atlas.bmp");
   atlas = SDL_CreateTextureFromSurface(renderer, surface);
@@ -148,15 +126,11 @@ Screen::Screen(int w, int h) {
   }
   SDL_FreeSurface(surface);
 
-  /* SDL_SetColorKey(charset, true, 0x000000); */
-
   t1 = SDL_GetTicks();
   t2 = t1;
 }
 
 Screen::~Screen() {
-  SDL_FreeSurface(screen);
-  SDL_DestroyTexture(scrtex);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_DestroyTexture(atlas);
